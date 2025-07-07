@@ -1,1 +1,1 @@
-# Insurance_Prediction_System
+# Insurance Prediction System
