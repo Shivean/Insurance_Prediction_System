@@ -1,0 +1,46 @@
+# Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Django migrations
+*/migrations/*
+!*/migrations/__init__.py
+
+# Database files
+*.sqlite3
+
+# Django media and static files
+/static/
+media/
+
+# Virtual environment
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE/editor files
+.idea/
+.vscode/
+
+
+# Python virtual environment folders (some common names)
+.venv/
+env/
+
+# Log files
+*.log
+
+# .env or .env files (stores sensitive information like secret keys, passwords)
+.env
+
+# Pytest cache
+.pytest_cache/
+
+# Pipenv
+Pipfile.lock
+
