@@ -8,8 +8,10 @@ from .serializers import (UserRegistrationSerializer, LoginSerializer,
                           ProfileSerializer, UpdataProfileSerializer,
                             ChangePasswordSerializer)
 
+from users.models import CustomUser
+
 # Create your views here.
-@api_view(['POST'])
+@api_view(['POST']) # API Tested OK 
 @permission_classes([AllowAny])
 def register(request):
     serializer = UserRegistrationSerializer(data = request.data)
@@ -30,7 +32,7 @@ def register(request):
     
     return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
+@api_view(['POST']) #API Tested OK
 @permission_classes([AllowAny])
 def login(request):
     serializer = LoginSerializer(data = request.data)
@@ -60,42 +62,45 @@ def user_logout(request):
         'message': 'Logout successful.'
     }, status = status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['GET']) # API Tested OK
 @permission_classes([IsAuthenticated])
 def profile(request):
 
     user_profile = request.user
+    # user_profile = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
     serializer = ProfileSerializer(user_profile)
 
-    return response(serializer.data, status = status.HTTP_200_OK)
+    return Response(serializer.data, status = status.HTTP_200_OK)
 
-@api_view(['PUT'])
+@api_view(['PUT']) # API Tested OK
 @permission_classes([IsAuthenticated])
 def update_profile(request):
     user = request.user
+    #user = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
     serializer = UpdataProfileSerializer(user, data = request.data)
 
     if serializer.is_valid():
         serializer.save()
 
-        return response({
+        return Response({
             'message': 'Profile Update succesfully',
             'user': UpdataProfileSerializer(user).data
         }, status = status.HTTP_200_OK)
     
-    return response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def change_password(request):
+    # user = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
     serializer = ChangePasswordSerializer(data = request.data, context = {'request': request})
-
+    
     if serializer.is_valid():
         user = request.user
         new_password = serializer.validated_data['new_password']
         user.set_password(new_password)
         user.save()
-        return response({
+        return Response({
             'message': 'Password changed successfully.'
         }, status = status.HTTP_200_OK)
-    return response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

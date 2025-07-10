@@ -46,7 +46,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'phone_number', 'email', 'created_at']
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'date_joined']
         read_only_fields = fields
 
 class UpdataProfileSerializer(serializers.ModelSerializer):
@@ -60,6 +60,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     confirm_new_password = serializers.CharField(write_only = True)
 
     def validate_current_password(self, value):
+        # user = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
         user = self.context['request'].user
         if not user.check_password(value):
             raise serializers.ValidationError('Current password is incorrect.')
