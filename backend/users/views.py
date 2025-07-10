@@ -1,19 +1,23 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from django.contrib.auth import logout
 from rest_framework import response, status
-from .serializers import UserRegistrationSerializer, LoginSerializer
-
+from .serializers import (UserRegistrationSerializer, LoginSerializer, 
+                          ProfileSerializer, UpdataProfileSerializer,
+                            ChangePasswordSerializer)
 
 # Create your views here.
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     serializer = UserRegistrationSerializer(data = request.data)
-    
+
     if serializer.is_valid():
         user = serializer.save()
-        token = Token.objects.get_or_create(user = user)
-        return response({
+        token, created = Token.objects.get_or_create(user = user)
+        return Response({
             'message': 'User created successfully',
             'token': token.key,
             'user': {
@@ -24,16 +28,17 @@ def register(request):
             }
         }, status = status.HTTP_201_CREATED)
     
-    return response(serializer.error, status = status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     serializer = LoginSerializer(data = request.data)
 
     if serializer.is_valid():
-        user = serializer.validated_data(['user'])
+        user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user = user)
-        return response({
+        return Response({
             'message': 'Login successful',
             'token': token.key,
             'user': {
@@ -44,4 +49,53 @@ def login(request):
             }
         }, status = status.HTTP_200_OK)
     
+    return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_logout(request):
+    request.user.auth_token.delete()
+    logout(request)
+    return response({
+        'message': 'Logout successful.'
+    }, status = status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profile(request):
+
+    user_profile = request.user
+    serializer = ProfileSerializer(user_profile)
+
+    return response(serializer.data, status = status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    user = request.user
+    serializer = UpdataProfileSerializer(user, data = request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+        return response({
+            'message': 'Profile Update succesfully',
+            'user': UpdataProfileSerializer(user).data
+        }, status = status.HTTP_200_OK)
+    
+    return response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    serializer = ChangePasswordSerializer(data = request.data, context = {'request': request})
+
+    if serializer.is_valid():
+        user = request.user
+        new_password = serializer.validated_data['new_password']
+        user.set_password(new_password)
+        user.save()
+        return response({
+            'message': 'Password changed successfully.'
+        }, status = status.HTTP_200_OK)
     return response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
