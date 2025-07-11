@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/insure-predict-cropped.png";
 import {
   FaFacebook,
@@ -12,11 +12,20 @@ import {
   FaHeartbeat,
   FaChartBar,
   FaCarAlt,
+  FaUserCircle,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import testimonialPerson from "../images/testimonial-person.jpg";
 import insurancePerson from "../images/insurance-person.jpeg";
+import { useAuth } from "../contexts/AuthContext";
 
 const LandingPage = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
   return (
     <div className="flex flex-col min-h-screen font-sans">
       {/* Header */}
@@ -26,12 +35,11 @@ const LandingPage = () => {
             <img
               src={logo}
               alt="Logo"
-              className="h-12 filter brightness-0 invert"
+              className="h-13 filter brightness-0 invert"
             />
           </Link>
         </div>
         <nav className="flex items-center gap-6">
-          {/* About Us Button */}
           <Link
             to="/about"
             className="flex items-center gap-2 text-base text-white hover:text-orange-300 px-4 py-2 transition-colors duration-300 ease-in-out"
@@ -40,23 +48,43 @@ const LandingPage = () => {
             About Us
           </Link>
 
-          {/* Login Button */}
-          <Link
-            to="/login"
-            className="flex items-center gap-2 text-base border border-white px-5 py-2 rounded-full text-white hover:bg-white hover:text-black transition-colors duration-300 ease-in-out"
-          >
-            <FaSignInAlt />
-            Login
-          </Link>
+          {user ? (
+            <>
+              <Link
+                to="/services-page/profile-page"
+                className="flex items-center gap-2 text-base text-white hover:text-orange-300 px-4 py-2 transition-colors duration-300 ease-in-out"
+              >
+                <FaUserCircle />
+                {user.firstName || "Profile"}
+              </Link>
 
-          {/* Register Button */}
-          <Link
-            to="/register"
-            className="flex items-center gap-2 text-base bg-[#F28B82] px-5 py-2 rounded-full text-white hover:bg-[#e76d68] transition-colors duration-300 ease-in-out"
-          >
-            <FaUserPlus />
-            Register
-          </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-base border border-white px-5 py-2 rounded-full text-white hover:bg-white hover:text-black transition-colors duration-300 ease-in-out"
+              >
+                <FaSignOutAlt />
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="flex items-center gap-2 text-base border border-white px-5 py-2 rounded-full text-white hover:bg-white hover:text-black transition-colors duration-300 ease-in-out"
+              >
+                <FaSignInAlt />
+                Login
+              </Link>
+
+              <Link
+                to="/register"
+                className="flex items-center gap-2 text-base bg-[#F28B82] px-5 py-2 rounded-full text-white hover:bg-[#e76d68] transition-colors duration-300 ease-in-out"
+              >
+                <FaUserPlus />
+                Register
+              </Link>
+            </>
+          )}
         </nav>
       </header>
 

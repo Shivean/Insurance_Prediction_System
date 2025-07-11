@@ -23,7 +23,8 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.get("/api/users/profile/");
       setUser(data);
       setIsAuthenticated(true);
-    } catch {
+    } catch (error) {
+      console.error("Auth check failed:", error); // ✅ Log the error
       logout();
     } finally {
       setLoading(false);
@@ -72,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (profileData) => {
     try {
       const { data } = await api.put("/api/profile/update/", profileData);
-      setUser((prevUser) => ({ ...prevUser, ...data.user }));
+      setUser((prevUser) => ({ ...prevUser, ...(data.user || data) })); // ✅ Safe spread
       return { success: true };
     } catch (error) {
       return {
@@ -102,7 +103,7 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth must be used within an <AuthProvider>");
   }
   return context;
 };

@@ -16,6 +16,7 @@ import Login from "./pages/Login";
 import RegisterForm from "./pages/RegisterForm";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
+import PredictionHistory from "./pages/services-page/PredictionHistory";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -23,15 +24,16 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          {/* Main layout wraps all child pages */}
+          {/* Public pages */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/services-page" element={<ServicesPage />}>
-            {/* Redirect base /services-page to /services-page/dashboard */}
-            <Route path="" element={<Navigate to="dashboard" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<RegisterForm />} />
 
-            {/* Explicit path for Dashboard */}
+          {/* Nested under ServicesPage layout */}
+          <Route path="/services-page" element={<ServicesPage />}>
+            <Route path="" element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route
               path="health-prediction"
@@ -39,13 +41,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             />
             <Route path="car-insurance" element={<CarInsurancePrediction />} />
             <Route path="profile-page" element={<ProfilePage />} />
+            <Route path="history" element={<PredictionHistory />} />{" "}
+            {/* ✅ New route */}
           </Route>
-
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<RegisterForm />} />
-
-          {/* Route that bypasses MainLayout */}
-          {/* <Route path="/logout" element={<Logout />} /> */}
         </Routes>
         <Toaster
           position="top-right"
