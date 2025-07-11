@@ -8,10 +8,10 @@ import {
   FaThLarge,
   FaSignOutAlt,
 } from "react-icons/fa";
-import logo from "./insure-predict-cropped.png";
+import logo from "../assets/insure-predict-cropped.png";
 import { Outlet } from "react-router-dom";
 
-const MainLayout = () => {
+const ServicesPage = () => {
   const location = useLocation();
   return (
     <div className="h-screen flex flex-col">
@@ -35,32 +35,32 @@ const MainLayout = () => {
             <NavItem
               icon={<FaThLarge />}
               label="Dashboard"
-              to="/"
-              active={location.pathname === "/"}
+              to=""
+              active={location.pathname.includes("dashboard")}
             />
             <NavItem
               icon={<FaShieldAlt />}
               label="Health Insurance Prediction"
-              to="/health-prediction"
-              active={location.pathname === "/health-prediction"}
+              to="health-prediction"
+              active={location.pathname.includes("health-insurance")}
             />
             <NavItem
               icon={<FaCarCrash />}
               label="Car Insurance Prediction"
-              to="/car-insurance"
-              active={location.pathname === "/car-insurance"}
+              to="car-insurance"
+              active={location.pathname.includes("car-insurance")}
             />
             <NavItem
               icon={<FaHistory />}
               label="Prediction History"
-              to="/history"
-              active={location.pathname === "/history"}
+              to="history"
+              active={location.pathname.includes("history")}
             />
             <NavItem
               icon={<FaUser />}
               label="User Details"
-              to="/profile-page"
-              active={location.pathname === "/profile-page"}
+              to="profile-page"
+              active={location.pathname.includes("profile-page")}
             />
           </nav>
           <div className="flex items-center gap-4 px-3 py-2 rounded cursor-pointer text-gray-600 hover:bg-rose-500 hover:text-white transition-colors duration-300">
@@ -95,4 +95,4 @@ const NavItem = ({ icon, label, to, active }) => (
   </Link>
 );
 
-export default MainLayout;
+export default ServicesPage;
