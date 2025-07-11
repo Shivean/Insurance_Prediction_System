@@ -16,12 +16,14 @@ const ServicesPage = () => {
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#37474F] to-[#263238] text-white flex items-center gap-12 px-6 py-4 shadow">
-        <img
-          src={logo}
-          alt="Logo"
-          className="h-13 filter brightness-0 invert cursor-pointer"
-        />
+      <header className="bg-gradient-to-r from-[#37474F] to-[#263238] text-white flex items-center gap-6 px-6 py-4 shadow">
+        <Link to="/" className="inline-flex items-center">
+          <img
+            src={logo}
+            alt="Logo"
+            className="h-13 filter brightness-0 invert cursor-pointer"
+          />
+        </Link>
         <h1 className="text-xl font-[BIZ_UDPMincho]">
           Insurance Prediction System Services
         </h1>
@@ -42,7 +44,7 @@ const ServicesPage = () => {
               icon={<FaShieldAlt />}
               label="Health Insurance Prediction"
               to="health-prediction"
-              active={location.pathname.includes("health-insurance")}
+              active={location.pathname.includes("health-prediction")}
             />
             <NavItem
               icon={<FaCarCrash />}
@@ -63,10 +65,12 @@ const ServicesPage = () => {
               active={location.pathname.includes("profile-page")}
             />
           </nav>
-          <div className="flex items-center gap-4 px-3 py-2 rounded cursor-pointer text-gray-600 hover:bg-rose-500 hover:text-white transition-colors duration-300">
-            <FaSignOutAlt />
-            <span>Log Out</span>
-          </div>
+          <Link to="/login">
+            <div className="flex items-center gap-4 px-3 py-2 rounded cursor-pointer text-gray-600 hover:bg-rose-500 hover:text-white transition-colors duration-300">
+              <FaSignOutAlt />
+              <span>Log Out</span>
+            </div>
+          </Link>
         </aside>
         {/* Main content */}
         <main className="main-scroll flex-1 bg-[#CFE8ED] p-6 overflow-y-auto h-full">

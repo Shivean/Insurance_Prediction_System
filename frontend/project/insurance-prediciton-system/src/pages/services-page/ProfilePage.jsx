@@ -7,6 +7,7 @@ import {
   FaEnvelope,
   FaSave,
 } from "react-icons/fa";
+import { User } from "lucide-react";
 
 const ProfilePage = () => {
   const [name, setName] = useState("Shivaram");
@@ -61,10 +62,10 @@ const ProfilePage = () => {
     <div className="min-h-screen flex flex-col md:flex-row items-start gap-8 px-12 py-2">
       {/* Left Profile Card */}
       <div className="bg-[#37474F] text-white p-12 rounded-2xl shadow-lg w-full md:max-w-sm flex flex-col items-center text-center font-[DM Sans]">
-        <div className="bg-gray-300 text-gray-700 w-20 h-20 rounded-full flex items-center justify-center text-3xl mb-4">
-          👤
+        <div className="bg-gradient-to-r from-[#327c94] to-[#5fb9ff]  text-gray-700 w-20 h-20 rounded-full flex items-center justify-center text-3xl mb-4">
+          <User className="w-8 h-8 text-white " />
         </div>
-        <h2 className="text-xl ">
+        <h2 className="text-2xl ">
           {name} {lastName}
         </h2>
         <p className="text-sm text-gray-300 ">{email}</p>
@@ -87,9 +88,8 @@ const ProfilePage = () => {
             <button
               onClick={isEditing ? handleSave : handleEdit}
               className={`flex items-center gap-x-1 text-sm px-3 py-1.5 rounded 
-              transition-colors duration-300 ease-in-out
-              
-                  bg-gray-100 text-gray-600 hover:text-white hover:bg-[#C6735C]`}
+              transition-colors duration-300 ease-in-out cursor-pointer 
+              bg-gray-100 text-gray-600 hover:text-white hover:bg-[#C6735C]`}
             >
               {isEditing ? (
                 <FaSave className="w-4 h-4" />
@@ -112,7 +112,7 @@ const ProfilePage = () => {
                 }
                 className={`text-sm border rounded px-4 py-2 w-full ${
                   isEditing ? "cursor-text" : "cursor-default"
-                } ${isEditing ? "editable" : "readonly"}`}
+                } ${isEditing ? "editable" : "readonly"} border-gray-300`}
               />
             </div>
             <div>
@@ -126,14 +126,14 @@ const ProfilePage = () => {
                 }
                 className={`text-sm border rounded px-4 py-2 w-full cursor-default ${
                   isEditing ? "cursor-text" : "cursor-default"
-                } ${isEditing ? "editable" : "readonly"}`}
+                } ${isEditing ? "editable" : "readonly"} border-gray-300`}
               />
             </div>
           </div>
 
           <div className="mb-4">
             <label className="block text-xs font-medium">Email</label>
-            <div className="flex items-center border rounded pl-3 pr-4 py-2">
+            <div className="flex items-center border border-gray-300 rounded pl-3 pr-4 py-2">
               <FaEnvelope className="text-gray-400 mr-2" />
               <input
                 type="email"
@@ -144,14 +144,14 @@ const ProfilePage = () => {
                 }
                 className={`w-full outline-none text-sm cursor-default ${
                   isEditing ? "cursor-text" : "cursor-default"
-                } ${isEditing ? "editable" : "readonly"}`}
+                } ${isEditing ? "editable" : "readonly"} `}
               />
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-medium">Phone Number</label>
-            <div className="flex items-center border rounded pl-3 pr-4 py-2">
+            <div className="flex items-center border border-gray-300 rounded pl-3 pr-4 py-2">
               <FaPhoneAlt className="text-gray-400 mr-2" />
               <input
                 type="tel"
@@ -164,7 +164,7 @@ const ProfilePage = () => {
                 }
                 className={`w-full outline-none text-sm cursor-default ${
                   isEditing ? "cursor-text" : "cursor-default"
-                } ${isEditing ? "editable" : "readonly"}`}
+                } ${isEditing ? "editable" : "readonly"} border-gray-300`}
               />
             </div>
           </div>
@@ -173,18 +173,18 @@ const ProfilePage = () => {
         {/* Change Password Section */}
         <div className="bg-white rounded-lg p-6 shadow-md font-[Poppins]">
           <h3 className="text-1xl font-semibold mb-2">Change Password</h3>
-          <hr className="mb-4" />
+          <hr className="mb-4 border-gray-400" />
 
           {/* Old Password */}
           <div className="mb-4">
             <label className="block text-xs font-medium">Old Password</label>
-            <div className="flex items-center border rounded pl-3 pr-4 py-2">
+            <div className="flex items-center border border-gray-300 rounded pl-3 pr-4 py-2">
               <FaLock className="text-gray-400 mr-2" />
               <input
                 type="password"
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
-                className="w-full outline-none text-sm"
+                className="w-full outline-none text-sm "
               />
             </div>
           </div>
@@ -192,7 +192,7 @@ const ProfilePage = () => {
           {/* New Password */}
           <div className="mb-4">
             <label className="block font-medium text-xs">New Password</label>
-            <div className="flex items-center border rounded pl-3 pr-4 py-2">
+            <div className="flex items-center border border-gray-300 rounded pl-3 pr-4 py-2">
               <FaLock className="text-gray-400 mr-2" />
               <input
                 type="password"
