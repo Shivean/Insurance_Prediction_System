@@ -1,4 +1,5 @@
 import React from "react";
+import { User } from "lucide-react";
 import {
   FaCalendarAlt,
   FaPhoneAlt,
@@ -11,19 +12,30 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-start gap-8 p-12">
       {/* Left Profile Card */}
-      <div className="bg-[#37474F] text-white p-12 rounded-2xl shadow-lg w-full md:max-w-sm flex flex-col items-center text-center font-[Open_Sans]">
-        <div className="bg-gray-300 text-gray-700 w-20 h-20 rounded-full flex items-center justify-center text-3xl mb-4">
-          👤
+      <div className="bg-[#263238] text-white p-10 rounded-3xl shadow-xl w-full md:max-w-sm flex flex-col items-center text-center font-[allerta] transition duration-300 hover:shadow-2xl">
+        {/* Avatar Circle with Ring */}
+        <div className="relative mb-5">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 p-1">
+            <div className="bg-gray-800 w-full h-full rounded-full flex items-center justify-center">
+              <User className="w-10 h-10 text-white" />
+            </div>
+          </div>
         </div>
-        <h2 className="text-xl font-semibold">Swarup Lamsal</h2>
-        <p className="text-sm text-gray-300">swaruplamsal@gmail.com</p>
-        <div className="mt-6 text-sm text-gray-300 flex flex-col gap-3 items-start w-full px-4">
-          <p className="flex items-center gap-2">
-            <FaCalendarAlt /> Member since December 1, 2000
-          </p>
-          <p className="flex items-center gap-2">
-            <FaPhoneAlt /> +977 9812345678
-          </p>
+
+        {/* Name and Email */}
+        <h2 className="text-2xl font-bold mb-1">Swarup Lamsal</h2>
+        <p className="text-sm text-gray-400 mb-6">swaruplamsal@gmail.com</p>
+
+        {/* Info Section */}
+        <div className="w-full px-6 text-sm text-gray-300 space-y-4 text-left">
+          <div className="flex items-center gap-3">
+            <FaCalendarAlt className="text-blue-400" />
+            <span>Member since December 1, 2000</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <FaPhoneAlt className="text-green-400" />
+            <span>+977 9812345678</span>
+          </div>
         </div>
       </div>
 

@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "tailwindcss";
+/* Scrollbar Track */
+::-webkit-scrollbar {
+  width: 12px; /* width of vertical scrollbar */
+  height: 12px; /* height of horizontal scrollbar */
+}
+
+/* Scrollbar Track */
+::-webkit-scrollbar-track {
+  background: #cfe8ed; /* light blue background */
+  border-radius: 10px;
+}
+
+/* Scrollbar Thumb */
+::-webkit-scrollbar-thumb {
+  background: #495e68; /* bright blue */
+  border-radius: 10px;
+  border: 3px solid #e0f2fe; /* padding around thumb */
+  transition: background-color 0.6s ease;
+}
+
+/* Scrollbar Thumb hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #37474f; /* darker blue on hover */
+}
+
+input[type="number"].remove-arrow::-webkit-inner-spin-button,
+input[type="number"].remove-arrow::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"].remove-arrow {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.mb-8 {
+  padding-left: 30px;
+}
+/* Dashboard stats */
+.dashboard-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-148;
+  padding-left: 30px;
+}
+
+.stat-card {
+  width: 540px;
+}
+.stat-card {
+  @apply bg-[#325259] rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200;
+}
+
+.stat-value {
+  @apply text-3xl font-bold text-white;
+}
+
+.stat-label {
+  @apply text-sm text-white mt-1;
+} 
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-[#325259] hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white rounded-lg shadow-md p-6 border border-gray-200 ml-8 mr-8;
+}
+
+.card-header {
+  @apply border-b border-gray-200 pb-4 mb-4;
+}
+
+.card-title {
+  @apply text-xl font-semibold text-gray-900;
+  
+}
+
+/* Form styles */
+.form-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-white mb-1;
+}
