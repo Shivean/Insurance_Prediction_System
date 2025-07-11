@@ -22,11 +22,13 @@ const LandingPage = () => {
       {/* Header */}
       <header className="bg-gradient-to-r from-[#37474F] to-[#263238] text-white px-16 py-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-12 filter brightness-0 invert"
-          />
+          <Link to="/">
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-12 filter brightness-0 invert"
+            />
+          </Link>
         </div>
         <nav className="flex items-center gap-6">
           {/* About Us Button */}
@@ -175,14 +177,14 @@ const LandingPage = () => {
         <footer className="bg-[#E5F5F8] text-gray-800 p-16 border border-black mx-4 my-8">
           <div className="flex flex-col md:flex-row justify-between gap-12">
             {/* Contact Info + Logo */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 font-[Open_Sans]">
               <img src={logo} alt="Logo" className="w-sm h-auto mb-2 invert" />
               <p>Email: support@insurepredict.com</p>
-              <p>Phone: +01 393804</p>
+              <p>Phone: 01 393804, +977 9812345678</p>
             </div>
 
             {/* Helpful Links */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 font-[Open_Sans]">
               <h4 className="font-semibold mb-4">Helpful Links</h4>
               <Link to="/about" className="hover:underline mb-3">
                 About Us
@@ -190,13 +192,17 @@ const LandingPage = () => {
               <Link to="/contact" className="hover:underline mb-3">
                 Contact Us
               </Link>
-              <Link to="/terms" className="hover:underline mb-3">
+              <a
+                href="../assets/InsurePredict_Terms_And_Conditions.pdf"
+                download
+                className="hover:underline mb-3"
+              >
                 Terms and Conditions
-              </Link>
+              </a>
             </div>
 
             {/* Social Media */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 font-[Open_Sans]">
               <h4 className="font-semibold mb-4">Social Media</h4>
               <a
                 href="https://facebook.com"

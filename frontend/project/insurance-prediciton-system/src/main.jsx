@@ -14,6 +14,8 @@ import { Toaster } from "react-hot-toast";
 import "./App.css";
 import Login from "./pages/Login";
 import RegisterForm from "./pages/RegisterForm";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -23,6 +25,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Routes>
           {/* Main layout wraps all child pages */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/services-page" element={<ServicesPage />}>
             {/* Redirect base /services-page to /services-page/dashboard */}
             <Route path="" element={<Navigate to="dashboard" replace />} />

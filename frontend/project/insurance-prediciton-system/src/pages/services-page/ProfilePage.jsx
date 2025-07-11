@@ -177,7 +177,7 @@ const ProfilePage = () => {
 
           {/* Old Password */}
           <div className="mb-4">
-            <label className="block text-xs font-medium">Old Password</label>
+            <label className="block text-xs font-medium ">Old Password</label>
             <div className="flex items-center border border-gray-300 rounded pl-3 pr-4 py-2">
               <FaLock className="text-gray-400 mr-2" />
               <input
