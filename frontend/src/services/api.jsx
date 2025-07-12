@@ -23,14 +23,8 @@ api.interceptors.request.use(
 );
 
 // Response interceptor to handle errors
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Token ${token}`;
-    }
-    return config;
-  },
+api.interceptors.response.use(
+  (response) => response,
   (error) => Promise.reject(error)
 );
 
