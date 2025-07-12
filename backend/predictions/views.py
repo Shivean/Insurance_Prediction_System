@@ -3,8 +3,9 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import HealthInsuranceSerializer, CarInsuranceSerializer
-import joblib, numpy as np
+from .serializers import HealthInsuranceSerializer, CarInsuranceSerializer, PredictionHistorySerializer
+import joblib
+from django.db.models import Count, Max
 from .models import PredictionHistory, CustomUser
 
 health_prediction_model = joblib.load('ml_model/health_prediction_model.pkl')
@@ -52,12 +53,12 @@ def HealthInsurancePrediction(request):
             predicted_health_premium = health_prediction_model.predict(ml_input) # Here, ML model performs prediction on given input
 
             # Saving prediction to database (Table: PredictionHistory)
-            PredictionHistory.objects.create(
-                user = request.user,
-                input_data = input_data,
-                predicted_premium = predicted_health_premium,
-                insurance_type = 'health'
-                )
+            # PredictionHistory.objects.create(
+            #     user = request.user,
+            #     input_data = input_data,
+            #     predicted_premium = predicted_health_premium,
+            #     insurance_type = 'health'
+            #     )
 
             return Response({
                 'predicted_health_premium': predicted_health_premium
@@ -117,3 +118,34 @@ def CarInsurancePrediction(request):
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     return Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST)
+
+
+# Dashboard Stats
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def DashboardInfo(request):
+    user = request.user
+    # user = CustomUser.objects.get(username = 'shivaram@gmail.com') # For API testing purpose
+
+    # Total number of predictions made by the user
+    total_prediction = PredictionHistory.objects.filter(user=user).count()
+
+    # Last prediction date
+    last_prediction = PredictionHistory.objects.filter(user=user).aggregate(
+        last_date=Max('created_at')
+    )['last_date']
+
+    return Response({
+        'total_predictions': total_prediction,
+        'last_prediction_date': last_prediction
+    }, status = status.HTTP_200_OK)
+
+# User prediction history
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def UserPredictionHistory(request):
+    user = request.user
+    # user = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
+    history = PredictionHistory.objects.filter(user=user).order_by('-created_at')
+    serializer = PredictionHistorySerializer(history, many=True)
+    return Response(serializer.data)

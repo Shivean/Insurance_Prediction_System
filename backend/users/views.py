@@ -77,8 +77,8 @@ def profile(request):
 def update_profile(request):
     user = request.user
     #user = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
-    serializer = UpdataProfileSerializer(user, data = request.data)
-
+    # serializer = UpdataProfileSerializer(user, data = request.data)
+    serializer = UpdataProfileSerializer(user, data = request.data, partial = True) # If you want to update only some fields
     if serializer.is_valid():
         serializer.save()
 

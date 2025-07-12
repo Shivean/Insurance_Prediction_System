@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaEnvelope, FaPhone, FaLock, FaKey } from "react-icons/fa";
 import { User, Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
+import { useAuth } from '../contexts/AuthContext';
 import logo from "../assets/insure-predict-cropped.png";
 
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const { register: registerUser } = useAuth();
-  // const navigate = useNavigate();
+  const { register: registerUser } = useAuth();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -19,13 +20,15 @@ const RegisterForm = () => {
     formState: { errors },
   } = useForm();
 
+  const password = watch('password');
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
       const result = await registerUser(data);
       if (result.success) {
         toast.success("Registration successful!");
-        navigate("/");
+        navigate("/login");
       } else {
         toast.error(result.error || "Registration failed");
       }
@@ -61,7 +64,7 @@ const RegisterForm = () => {
                 type="text"
                 {...register("first_name", {
                   required: "First name is required.",
-                  minlength: {
+                  minLength: {
                     value: 5,
                     message: "First name must be at least 5 characters.",
                   },
@@ -81,7 +84,7 @@ const RegisterForm = () => {
                 type="text"
                 {...register("last_name", {
                   required: "Last name is required.",
-                  minlength: {
+                  minLength: {
                     value: 5,
                     message: "Last name must be at least 5 characters.",
                   },
@@ -241,7 +244,6 @@ const RegisterForm = () => {
               disabled={isLoading}
               className="bg-[#c1664e] text-</div>white w-40 py-2 rounded-md hover:bg-[#a5543f] transition-all duration-200 flex items-center justify-center gap-2"
             >
-              <FaKey />
               {isLoading ? (
                 <div className="loading-spinner w-5 h-5"></div>
               ) : (

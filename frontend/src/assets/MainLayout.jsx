@@ -35,32 +35,32 @@ const MainLayout = () => {
             <NavItem
               icon={<FaThLarge />}
               label="Dashboard"
-              to="/"
-              active={location.pathname === "/"}
+              to="/main"
+              active={location.pathname === "/main"}
             />
             <NavItem
               icon={<FaShieldAlt />}
               label="Health Insurance Prediction"
-              to="/health-prediction"
-              active={location.pathname === "/health-prediction"}
+              to="/main/health_prediction"
+              active={location.pathname === "/main/health_prediction"}
             />
             <NavItem
               icon={<FaCarCrash />}
               label="Car Insurance Prediction"
-              to="/car-insurance"
-              active={location.pathname === "/car-insurance"}
+              to="/main/car_prediction"
+              active={location.pathname === "/main/car_prediction"}
             />
             <NavItem
               icon={<FaHistory />}
               label="Prediction History"
-              to="/history"
-              active={location.pathname === "/history"}
+              to="/main/history"
+              active={location.pathname === "/main/history"}
             />
             <NavItem
               icon={<FaUser />}
               label="User Details"
-              to="/profile-page"
-              active={location.pathname === "/profile-page"}
+              to="/main/profile"
+              active={location.pathname === "/main/profile"}
             />
           </nav>
           <div className="flex items-center gap-4 px-3 py-2 rounded cursor-pointer text-gray-600 hover:bg-rose-500 hover:text-white transition-colors duration-300">

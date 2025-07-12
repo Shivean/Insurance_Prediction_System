@@ -26,3 +26,8 @@ class HealthInsuranceSerializer(serializers.Serializer):
     any_allergies = serializers.BooleanField()
     history_of_cancer_in_family = serializers.BooleanField()
     no_of_major_surgery = serializers.IntegerField()
+
+class PredictionHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PredictionHistory
+        fields = ['id', 'input_data', 'insurance_type', 'predicted_premium', 'created_at']
