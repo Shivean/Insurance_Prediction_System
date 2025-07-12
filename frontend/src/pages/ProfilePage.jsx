@@ -333,9 +333,9 @@ const ProfilePage = () => {
                   })}
                   className="w-full outline-none text-sm"
                 />
-                {errors.current_password && (
+                {errors.new_password && (
                   <p className="text-red-500 text-sm">
-                    {errors.current_password.message}
+                    {errors.new_password.message}
                   </p>
                 )}
               </div>
