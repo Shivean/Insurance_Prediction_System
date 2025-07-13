@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv('backend/main/.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY = os.getenv('SECRET_KEY')
 SECRET_KEY = 'django-insecure-a*0i&!j&1ylt8tw91#a!62zx2g1%-6@xoy=2yj6oy2@m4xp8(y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-# ALLOWED_HOSTS = ['localhost:5173', '127.0.0.1:5173', '127.0.0.1:8000', '127.0.0.1', 'localhost']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost:5173', '127.0.0.1:5173', '127.0.0.1:8000', '127.0.0.1', 'localhost']
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')   
 
 
 # Application definition
@@ -45,7 +50,10 @@ INSTALLED_APPS = [
     'corsheaders'
 ]
 
+# After setting in .env
 CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -94,13 +102,24 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'insurance_prediction_system',
-        'USER': 'postgres',
-        'PASSWORD': 'postgre', 
-        'HOST': 'localhost',
+        'NAME': 'postgres',
+        'USER': 'postgres.dkjmqvjvblugpptpoaao',
+        'PASSWORD': 'postgre@123', 
+        'HOST': 'aws-0-us-east-2.pooler.supabase.com',
         'PORT': '5432'
     }
 }
+#  After setting database into .env
+# DATABASES = {
+#     'default': {  
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME'),       
+#         'USER': os.getenv('DB_USER'),
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
+#     }
+# }
 
 AUTH_USER_MODEL = 'users.CustomUser'
 

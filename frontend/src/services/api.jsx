@@ -23,7 +23,7 @@ api.interceptors.request.use(
 );
 
 // Response interceptor to handle errors
-api.interceptors.request.use(
+api.interceptors.response.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -48,14 +48,11 @@ export const healthPredictionAPI = {
   createPrediction: (predictionData) => api.post('/api/predictions/health_insurance/', predictionData),
   getPredictions: () => api.get('/api/predictions/history/'),
   getStats: () => api.get('/api/predictions/dashboard/'),
-  // getPrediction: (id) => api.get(`/api/predictions/${id}/`),
-  // deletePrediction: (id) => api.delete(`/api/predictions/${id}/`),
-  // getStats: () => api.get('/api/predictions/stats/'),
+  deletePrediction: (id) => api.delete(`/api/predictions/delete/${id}/`),
 };
 
 export const carPredictionAPI = {
-  createPrediction : (predictionData) => api.post('/api/predictions/car_prediction/', predictionData),
-  getPrediction : () => api.get('/api/predictions/car_prediction/')
+  createPrediction : (predictionData) => api.post('/api/predictions/car_insurance/', predictionData),
 }
 
 export default api; 

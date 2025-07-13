@@ -1,26 +1,24 @@
 from django.shortcuts import render
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import HealthInsuranceSerializer, CarInsuranceSerializer, PredictionHistorySerializer
 import joblib
-from django.db.models import Count, Max
-from .models import PredictionHistory, CustomUser
+from django.db.models import Max
+from .models import PredictionHistory
 
+# Loading the pre-trained machine learning models
 health_prediction_model = joblib.load('ml_model/health_prediction_model.pkl')
 car_predicition_model = joblib.load('ml_model/car_insurance_prediction_model.pkl')
 
-# Create your views here.
 @api_view(['POST'])
-@permission_classes([IsAuthenticated]) # Permission class is IsAuthenticated
+@permission_classes([IsAuthenticated])
 def HealthInsurancePrediction(request):
     serializers = HealthInsuranceSerializer(data = request.data)
 
     if serializers.is_valid():
         prediction_data = serializers.validated_data
-
-        # default_user = CustomUser.objects.get(username = 'shivaram@gmail.com') # For API testing purpose
         
         input_data = {  # Input data is organized into a dictionary since 'input_data' is a JSONField in the model
             'age': prediction_data['age'],
@@ -53,15 +51,15 @@ def HealthInsurancePrediction(request):
             predicted_health_premium = health_prediction_model.predict(ml_input) # Here, ML model performs prediction on given input
 
             # Saving prediction to database (Table: PredictionHistory)
-            # PredictionHistory.objects.create(
-            #     user = request.user,
-            #     input_data = input_data,
-            #     predicted_premium = predicted_health_premium,
-            #     insurance_type = 'health'
-            #     )
+            PredictionHistory.objects.create(
+                user = request.user,
+                input_data = input_data,
+                predicted_premium = predicted_health_premium,
+                insurance_type = 'health'
+                )
 
             return Response({
-                'predicted_health_premium': predicted_health_premium
+                'predicted_health_premium': predicted_health_premium # The result is a 1D array, so we can directly return it
             }, status = status.HTTP_200_OK)
         except Exception as e:
             return Response({
@@ -72,14 +70,12 @@ def HealthInsurancePrediction(request):
 
 # For Car Insurance Prediction
 @api_view(['POST'])
-@permission_classes([IsAuthenticated]) # Permission class is IsAuthenticated
+@permission_classes([IsAuthenticated]) 
 def CarInsurancePrediction(request):
     serializers = CarInsuranceSerializer(data = request.data)
 
     if serializers.is_valid():
         prediction_data = serializers.validated_data
-
-        # default_user = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
 
         input_data = { # Input data is organized into a dictionary since 'input_data' is a JSONField in the model
             'driver_age': prediction_data['driver_age'],
@@ -89,7 +85,7 @@ def CarInsurancePrediction(request):
             'prv_accident': prediction_data['prv_accident'],
         }
 
-        ml_input = ([[
+        ml_input = ([[ # This is the input data for the ML model in 2D array format
             prediction_data['driver_age'],
             prediction_data['driving_experience'],
             prediction_data['annual_mileage'],
@@ -109,23 +105,20 @@ def CarInsurancePrediction(request):
                 insurance_type = 'car')
             
             return Response({
-                'predicted_car_premium': predicted_car_premium
+                'predicted_car_premium': predicted_car_premium # The result is a 1D array, so we can directly return it
                 }, status = status.HTTP_200_OK)
         
         except Exception as e:
             return Response({
                 'error': f'Prediction failed: {str(e)}'
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
     return Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST)
-
 
 # Dashboard Stats
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def DashboardInfo(request):
     user = request.user
-    # user = CustomUser.objects.get(username = 'shivaram@gmail.com') # For API testing purpose
 
     # Total number of predictions made by the user
     total_prediction = PredictionHistory.objects.filter(user=user).count()
@@ -145,7 +138,17 @@ def DashboardInfo(request):
 @permission_classes([IsAuthenticated])
 def UserPredictionHistory(request):
     user = request.user
-    # user = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
+    
     history = PredictionHistory.objects.filter(user=user).order_by('-created_at')
     serializer = PredictionHistorySerializer(history, many=True)
     return Response(serializer.data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])  
+def DeletePrediction(request, pk):
+    try:
+        prediction = PredictionHistory.objects.get(pk=pk, user=request.user)
+        prediction.delete()
+        return Response({'message': 'Prediction deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        return Response({'error': f'An error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

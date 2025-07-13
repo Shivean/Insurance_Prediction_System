@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/insure-predict-cropped.png";
 import {
@@ -22,9 +22,35 @@ import { useAuth } from "../contexts/AuthContext";
 const LandingPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const handleLogout = () => {
-    logout();
-    navigate("/");
+  const [messageVisible, setMessageVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = () => {
+    setMessageVisible(true); // Show the message
+    setTimeout(() => {
+      setMessageVisible(false); // Hide the message after 3 seconds
+    }, 3000); // 3 seconds delay
+  };
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      await logout();
+      localStorage.removeItem("token"); // Clear the token from local storage
+      navigate("/"); // Redirect to the LandingPage route after logout
+      window.location.reload(); // reset the page after logout
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmLogout = () => {
+    handleLogout(); // Call the provided handleLogout function to log out
+    //setShowModal(false); // Close the modal after logout
   };
   return (
     <div className="flex flex-col min-h-screen font-sans">
@@ -41,7 +67,7 @@ const LandingPage = () => {
         </div>
         <nav className="flex items-center gap-6">
           <Link
-            to="/about"
+            // to="/about"
             className="flex items-center gap-2 text-base text-white hover:text-orange-300 px-4 py-2 transition-colors duration-300 ease-in-out"
           >
             <FaInfoCircle />
@@ -51,15 +77,15 @@ const LandingPage = () => {
           {user ? (
             <>
               <Link
-                to="/services-page/profile-page"
+                to="/main"
                 className="flex items-center gap-2 text-base text-white hover:text-orange-300 px-4 py-2 transition-colors duration-300 ease-in-out"
               >
                 <FaUserCircle />
-                {user.firstName || "Profile"}
+                {user.first_name || "Profile"}
               </Link>
 
               <button
-                onClick={handleLogout}
+                onClick={() => setShowModal(true)}
                 className="flex items-center gap-2 text-base border border-white px-5 py-2 rounded-full text-white hover:bg-white hover:text-black transition-colors duration-300 ease-in-out"
               >
                 <FaSignOutAlt />
@@ -86,11 +112,37 @@ const LandingPage = () => {
             </>
           )}
         </nav>
+
+        {showModal && (
+          <div className="fixed inset-0 bg bg-opacity-20 flex justify-center items-center backdrop-blur-md">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+              <h3 className="text-lg font-semibold mb-4">Are you sure?</h3>
+              <p className="text-gray-600 mb-4">
+                Do you really want to log out?
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  className="px-4 py-2 bg-gray-300 rounded text-gray-700 hover:bg-gray-400"
+                  onClick={() => setShowModal(false)} // Close modal if canceled
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-rose-600"
+                  onClick={confirmLogout} // Proceed with logout
+                  disabled={loading} // Disable button if loading
+                >
+                  {loading ? "Logging out..." : "Log Out"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
       <section className="bg-[#3c5b62] text-white px-16 py-16 flex flex-col lg:flex-row items-center justify-between gap-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
+        <div className="flex flex-wrap justify-between items-center gap-10 w-full">
           <div className="max-w-2xl">
             <h1 className=" lg:text-7xl font-extrabold mb-4 leading-tight font-[BIZ_UDPMincho]">
               An AI-powered Insurance Prediction System
@@ -99,30 +151,48 @@ const LandingPage = () => {
               Get instant insurance premium estimates by submitting a few simple
               personal and lifestyle details.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 ">
               {/* Contact Us Link */}
-              <Link
-                to="/contact"
+
+              <button
+                // to="/contact"
+                onClick={handleClick}
                 className="flex items-center gap-2 text-base px-6 py-2 rounded-full border border-white text-white hover:bg-white hover:text-black transition-colors duration-300 ease-in-out"
               >
                 <FaEnvelope />
                 Contact Us
-              </Link>
+              </button>
 
-              <Link
-                to="/register"
-                className="flex items-center gap-2 text-base px-6 py-2 rounded-full bg-[#F28B82] text-white hover:bg-[#e76d68] transition-colors duration-300 ease-in-out"
-              >
-                <FaUserPlus />
-                Register
-              </Link>
+              {user ? (
+                <></>
+              ) : (
+                <>
+                  <div>
+                    <button
+                      to="/register"
+                      className="flex items-center gap-2 text-base px-6 py-2 rounded-full bg-[#F28B82] text-white hover:bg-[#e76d68] transition-colors duration-300 ease-in-out"
+                    >
+                      <FaUserPlus />
+                      Register
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
+
           <img
             src={insurancePerson}
             alt="Insurance Person"
-            className="shadow-lg h-96 w-auto ml-auto -mr-16"
+            className="shadow-lg h-96  "
           />
+
+          {messageVisible && (
+            <>
+              {/* <p className="mt-5">We are busy. Don't try to contact us.</p> */}
+              <span>We are busy. Don't try to contact us.</span>
+            </>
+          )}
         </div>
       </section>
 
@@ -194,10 +264,25 @@ const LandingPage = () => {
           alt="John Doe"
           className="w-24 h-24 rounded-full mx-auto mb-4"
         />
-        <p className="font-bold font-[Open_Sans]">John Doe</p>
-        <p className="text-sm text-gray-600 font-[Open_Sans]">
-          Chief Technical Officer, TechLord
-        </p>
+        {user ? (
+          <p className="text-lg font-semibold">
+            {user.first_name} {user.last_name}
+          </p>
+        ) : (
+          <p className="text-lg font-semibold">Donald Trump</p>
+        )}
+        {user ? (
+          <p className="text-sm text-gray-600">
+            {user.email}
+            <br />
+            {user.phone_number}
+          </p>
+        ) : (
+          <>
+            <p className="text-sm">donald@trump.com</p>
+            <p className="text-sm ">987654321</p>
+          </>
+        )}
       </section>
 
       {/* Footer */}

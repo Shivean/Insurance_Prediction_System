@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { healthPredictionAPI } from '../services/api';
-import {
-  Calculator,
-  Plus,
-  BarChart3,
-  Calendar,
-  User
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { healthPredictionAPI } from "../services/api";
+import { Calculator, Plus, BarChart3, Calendar, User } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
-
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [stats, setStats] = useState(null);
   const [recentPredictions, setRecentPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -25,52 +20,69 @@ const Dashboard = () => {
     }
   }, [authLoading, isAuthenticated]);
 
-   const fetchDashboardData = async () => {
+  const fetchDashboardData = async () => {
     try {
       const [statsResponse, predictionsResponse] = await Promise.all([
         healthPredictionAPI.getStats(),
-        healthPredictionAPI.getPredictions()
+        healthPredictionAPI.getPredictions(),
       ]);
 
       setStats(statsResponse.data);
       setRecentPredictions(predictionsResponse.data?.slice(0, 5) || []);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      toast.error('Failed to load dashboard data');
+      console.error("Error fetching dashboard data:", error);
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
-    const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   if (authLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
   }
   if (!isAuthenticated) {
-    return <div className="flex justify-center items-center h-screen">You must be logged in to view this page.</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        You must be logged in to view this page.
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="dashboard-container">
+        <div className="flex justify-center items-center h-64 mt-50 mb-50">
+          <div className="loading-spinner w-20 h-20"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
-
     <div className="dashboard-container">
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, {user?.first_name || user?.username || 'User'}!
+          Welcome back, {user?.first_name || user?.username || "User"}!
           {/* Welcome back, User! */}
         </h1>
         <p className="text-gray-600">
@@ -89,7 +101,7 @@ const Dashboard = () => {
             <span>New Prediction</span>
           </Link>
           <Link
-            to="/history"
+            to="/main/history"
             className="flex items-center space-x-2 bg-white text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200 shadow-md border border-gray-200"
           >
             <BarChart3 className="w-5 h-5" />
@@ -98,37 +110,38 @@ const Dashboard = () => {
         </div>
       </div>
 
-            {showModal && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
-          <div className="bg-gradient-to-br from-[#37474F] to-[#263238] text-white rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl border border-gray-700">
-            <h2 className="text-2xl font-bold mb-3 font-[Open_Sans]">
-              Choose Prediction Type
-            </h2>
-            <p className="text-gray-300 mb-6 font-[Open_Sans] text-sm">
+      {showModal && (
+        <div className="fixed inset-0 bg bg-opacity-20 flex justify-center items-center backdrop-blur-md">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg font-semibold mb-4">
+              Choose prediction type
+            </h3>
+            <p className="text-gray-600 mb-4">
               Select the type of insurance you'd like to predict.
             </p>
+
             <div className="flex flex-col gap-4">
               <button
                 onClick={() => {
                   setShowModal(false);
-                  navigate("/services-page/health-prediction");
+                  navigate("/main/health_prediction");
                 }}
-                className="bg-[#3a8dad] hover:bg-[#327c94] text-white font-medium px-4 py-2 cursor-pointer rounded-full transition-colors duration-300 ease-in-out"
+                className="px-4 py-2 bg-[#325259] rounded text-white hover:bg-rose-600"
               >
                 Health Insurance
               </button>
               <button
                 onClick={() => {
                   setShowModal(false);
-                  navigate("/services-page/car-insurance");
+                  navigate("/main/car_prediction");
                 }}
-                className="bg-[#B36F5C] hover:bg-[#9e5a48] text-white font-medium px-4 py-2 cursor-pointer rounded-full transition-colors duration-300 ease-in-out"
+                className="px-4 py-2 bg-[#325259] text-white rounded hover:bg-rose-600"
               >
                 Car Insurance
               </button>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-red-400 text-sm font-medium mt-2 transition-colors duration-300 ease-in-out"
+                className="text-gray-400 hover:text-red-600 text-sm font-medium mt-2 transition-colors duration-300 ease-in-out"
               >
                 Cancel
               </button>
@@ -158,17 +171,15 @@ const Dashboard = () => {
             <div>
               <p className="stat-label">Last Prediction</p>
               {/* <h3 className="stat-value">July 2, 2025</h3> */}
-              <p className="stat-value">{stats?.last_prediction_date || 'NA'}</p>
-
+              <p className="stat-value">
+                {stats?.last_prediction_date || "NA"}
+              </p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <Calendar className="w-6 h-6 text-green-600" />
             </div>
-          </div> 
+          </div>
         </div>
-
-    
-
       </div>
 
       {/* Recent Predictions */}
@@ -191,10 +202,8 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-
             <table className="w-full">
               <thead className="bg-gray-50">
-
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Date
@@ -212,13 +221,10 @@ const Dashboard = () => {
                     Premium
                   </th>
                 </tr>
-
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-
                 {recentPredictions.map((prediction) => (
                   <tr key={prediction.id} className="hover:bg-gray-50">
-
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="flex items-center">
                         <Calendar className="w-4 h-4 text-gray-400 mr-2" />
@@ -227,11 +233,13 @@ const Dashboard = () => {
                     </td>
 
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {prediction.insurance_type} 
+                      {prediction.insurance_type}
                     </td>
 
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
-                      {prediction?.input_data?.age || prediction?.input_data?.driver_age} years
+                      {prediction?.input_data?.age ||
+                        prediction?.input_data?.driver_age}{" "}
+                      years
                     </td>
 
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">

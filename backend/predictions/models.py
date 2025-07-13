@@ -1,8 +1,6 @@
 from django.db import models
 from users.models import CustomUser
 
-# Create your models here.
-
 # Model to store user's prediction history
 class PredictionHistory(models.Model):
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE, related_name = 'predictions')

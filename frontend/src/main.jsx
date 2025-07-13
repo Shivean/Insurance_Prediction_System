@@ -18,17 +18,17 @@ import ProfilePage from "./pages/ProfilePage";
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-// import History from "./pages/History"; // assuming you have this page
-import "./index.css";
+import History from "./pages/History";
 import "./App.css";
+import "./index.css";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    // Optionally, use a better spinner here
-    return <div>Loading...</div>;
+    return <div className="loading-spinner h-20 w-20"></div>;
   }
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -61,6 +61,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 element={<CarInsurancePrediction />}
               />
               <Route path="profile" element={<ProfilePage />} />
+
+              <Route path="history" element={<History />} />
             </Route>
           </Route>
         </Routes>

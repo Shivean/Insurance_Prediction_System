@@ -3,12 +3,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth import logout
-from rest_framework import response, status
+from rest_framework import status
 from .serializers import (UserRegistrationSerializer, LoginSerializer, 
                           ProfileSerializer, UpdataProfileSerializer,
                             ChangePasswordSerializer)
-
-from users.models import CustomUser
 
 # Create your views here.
 @api_view(['POST']) # API Tested OK 
@@ -53,12 +51,12 @@ def login(request):
     
     return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def user_logout(request):
     request.user.auth_token.delete()
     logout(request)
-    return response({
+    return Response({
         'message': 'Logout successful.'
     }, status = status.HTTP_200_OK)
 
@@ -67,7 +65,6 @@ def user_logout(request):
 def profile(request):
 
     user_profile = request.user
-    # user_profile = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
     serializer = ProfileSerializer(user_profile)
 
     return Response(serializer.data, status = status.HTTP_200_OK)
@@ -77,8 +74,8 @@ def profile(request):
 def update_profile(request):
     user = request.user
     #user = CustomUser.objects.get(username = 'shiva123@gmail.com') # For API testing purpose
-    # serializer = UpdataProfileSerializer(user, data = request.data)
-    serializer = UpdataProfileSerializer(user, data = request.data, partial = True) # If you want to update only some fields
+
+    serializer = UpdataProfileSerializer(user, data = request.data, partial = True)
     if serializer.is_valid():
         serializer.save()
 

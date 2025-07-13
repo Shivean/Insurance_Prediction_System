@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from .models import PredictionHistory
 
-
-class CarInsuranceSerializer(serializers.Serializer):
+class CarInsuranceSerializer(serializers.Serializer): 
     driver_age = serializers.IntegerField()
     driving_experience = serializers.IntegerField()
     annual_mileage = serializers.IntegerField()
@@ -14,7 +13,6 @@ class CarInsuranceSerializer(serializers.Serializer):
             raise serializers.ValidationError("Driver must be 18 years old.")
         return value
     
-
 class HealthInsuranceSerializer(serializers.Serializer):
     age = serializers.IntegerField()
     height = serializers.FloatField()
