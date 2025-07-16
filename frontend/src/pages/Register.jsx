@@ -20,7 +20,8 @@ const RegisterForm = () => {
     formState: { errors },
   } = useForm();
 
-  const password = watch("password");
+  const password = watch("password"); // Watch the password field for validation;
+  //  if new password does not match current password, it will show an error. (refered in line 212)
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -254,7 +255,7 @@ const RegisterForm = () => {
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              className="text-orange-300 hover:text-orange-700 font-medium"
             >
               Sign in
             </Link>

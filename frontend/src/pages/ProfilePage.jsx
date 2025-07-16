@@ -13,9 +13,10 @@ import {
   Lock,
   Eye,
   EyeOff,
-} from "lucide-react";
+} from "lucide-react";  // These are the icons used in the profile page
 
 const ProfilePage = () => {
+
   const {
     updateProfile,
     loading: authLoading,
@@ -52,6 +53,7 @@ const ProfilePage = () => {
     }
   }, [authLoading, isAuthenticated]);
 
+  // This function fetches the user's profile data from the API
   const fetchProfileData = async () => {
     setLoading(true);
     try {
@@ -105,6 +107,7 @@ const ProfilePage = () => {
     setIsEditing(false);
     reset(profileData); // Reset form to original values
   };
+
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -117,21 +120,6 @@ const ProfilePage = () => {
       day: "numeric",
     });
   };
-
-  if (authLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
-  }
-  if (!isAuthenticated) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        You must be logged in to view this page.
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-start gap-8 px-12 py-2">

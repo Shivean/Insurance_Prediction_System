@@ -18,6 +18,7 @@ import ProfilePage from "./pages/ProfilePage";
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import About from "./pages/About";
 import History from "./pages/History";
 import "./App.css";
 import "./index.css";
@@ -26,7 +27,12 @@ const ProtectedRoute = () => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading-spinner h-20 w-20"></div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="loading-spinner h-20 w-20"></div>
+        <p className="font-xl mt-5">Loading...</p>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -45,6 +51,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route index element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/about" element={<About />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>

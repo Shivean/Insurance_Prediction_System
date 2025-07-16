@@ -9,6 +9,8 @@ const HealthInsurancePrediction = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [prediction, setPrediction] = useState(null);
   const navigate = useNavigate();
+
+  // Initializes form handling with react-hook-form
   const {
     register,
     handleSubmit,
@@ -17,6 +19,7 @@ const HealthInsurancePrediction = () => {
     reset,
   } = useForm();
 
+  // Handles form submission
   const onSubmit = async (data) => {
     const { heightFt, heightIn, ...rest } = data;
 
@@ -33,6 +36,8 @@ const HealthInsurancePrediction = () => {
       height: heightInCM,
     };
     setIsLoading(true);
+
+    // Calls the API to create a prediction
     try {
       const res = await healthPredictionAPI.createPrediction(payload);
       setPrediction(res.data);
@@ -83,10 +88,11 @@ const HealthInsurancePrediction = () => {
     }).format(amount);
   };
 
+  // Displays the prediction result
   if (prediction) {
     return (
       <>
-        <div className="prediction-form">
+        <div className="prediction-form flex justify-center items-center">
           <div className="result-card">
             <CheckCircle className="w-16 h-16 text-white mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-4">Prediction Complete!</h2>
@@ -137,6 +143,7 @@ const HealthInsurancePrediction = () => {
   }
 
   return (
+    // Main form for health insurance prediction
     <div className="bg-gradient-to-b from-[#37474F] to-[#263238] text-white p-8 rounded-3xl shadow-lg max-w-4xl mx-auto">
       <h2 className="text-3xl font-semibold text-center mb-8 ">
         Health Insurance Premium Prediction Form
@@ -163,6 +170,7 @@ const HealthInsurancePrediction = () => {
                 </p>
               )}
             </div>
+            
             <div>
               <input
                 type="number"

@@ -17,6 +17,7 @@ const CarInsurancePrediction = () => {
     reset,
   } = useForm();
 
+  // Handles form submission
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
@@ -30,11 +31,13 @@ const CarInsurancePrediction = () => {
     }
   };
 
+  // When 'New Prediction' button clicked from result card
   const handleNewPrediction = () => {
     setPrediction(null);
     reset();
   };
 
+  // Handles currency as $
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -42,10 +45,11 @@ const CarInsurancePrediction = () => {
     }).format(amount);
   };
 
+  // For result card
   if (prediction) {
     return (
       <>
-        <div className="prediction-form">
+        <div className="prediction-form flex justify-center items-center">
           <div className="result-card">
             <CheckCircle className="w-16 h-16 text-white mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-4">Prediction Complete!</h2>
@@ -94,12 +98,14 @@ const CarInsurancePrediction = () => {
     );
   }
 
+
   return (
     <div className="bg-gradient-to-b from-[#37474F] to-[#263238] text-white p-8 rounded-3xl shadow-lg max-w-4xl mx-auto">
       <h2 className="text-3xl font-semibold text-center mb-10">
         Car Insurance Premium Prediction Form
       </h2>
 
+      {/* Car Insurance prediction form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 md:grid-cols-2 gap-8"

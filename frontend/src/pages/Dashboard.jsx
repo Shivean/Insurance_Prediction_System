@@ -20,6 +20,7 @@ const Dashboard = () => {
     }
   }, [authLoading, isAuthenticated]);
 
+  // Fetches data in dashboard from backend
   const fetchDashboardData = async () => {
     try {
       const [statsResponse, predictionsResponse] = await Promise.all([
@@ -52,21 +53,7 @@ const Dashboard = () => {
     });
   };
 
-  if (authLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
-  }
-  if (!isAuthenticated) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        You must be logged in to view this page.
-      </div>
-    );
-  }
-
+  // Renders loading spinner if data is still loading
   if (loading) {
     return (
       <div className="dashboard-container">
@@ -77,6 +64,7 @@ const Dashboard = () => {
     );
   }
 
+  // Renders dashboard content if data is loaded
   return (
     <div className="dashboard-container">
       {/* Welcome Section */}
@@ -187,13 +175,13 @@ const Dashboard = () => {
         <div className="card-header">
           <h3 className="card-title">Recent Predictions</h3>
         </div>
-
+        {/* If no recent predictions, shows empty state */}
         {recentPredictions.length === 0 ? (
           <div className="text-center py-8">
             <Calculator className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500 mb-4">No predictions yet</p>
             <Link
-              to="/predict"
+              onClick={() => setShowModal(true)}
               className="btn-primary inline-flex items-center space-x-2"
             >
               <Plus className="w-4 h-4" />
@@ -201,6 +189,7 @@ const Dashboard = () => {
             </Link>
           </div>
         ) : (
+          // If there are recent predictions, displays them in a table
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -214,9 +203,6 @@ const Dashboard = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Age
                   </th>
-                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Region
-                  </th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Premium
                   </th>
@@ -251,7 +237,7 @@ const Dashboard = () => {
             </table>
           </div>
         )}
-
+        
         {recentPredictions?.length > 0 && (
           <div className="mt-6 text-center">
             <Link

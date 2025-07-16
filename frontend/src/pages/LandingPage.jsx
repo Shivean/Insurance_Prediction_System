@@ -67,7 +67,7 @@ const LandingPage = () => {
         </div>
         <nav className="flex items-center gap-6">
           <Link
-            // to="/about"
+            to="/about"
             className="flex items-center gap-2 text-base text-white hover:text-orange-300 px-4 py-2 transition-colors duration-300 ease-in-out"
           >
             <FaInfoCircle />
@@ -116,7 +116,9 @@ const LandingPage = () => {
         {showModal && (
           <div className="fixed inset-0 bg bg-opacity-20 flex justify-center items-center backdrop-blur-md">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-              <h3 className="text-lg font-semibold mb-4">Are you sure?</h3>
+              <h3 className="text-lg text-black font-semibold mb-4">
+                Are you sure?
+              </h3>
               <p className="text-gray-600 mb-4">
                 Do you really want to log out?
               </p>
@@ -142,7 +144,7 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section className="bg-[#3c5b62] text-white px-16 py-16 flex flex-col lg:flex-row items-center justify-between gap-10">
-        <div className="flex flex-wrap justify-between items-center gap-10 w-full">
+        <div className="flex justify-between items-center gap-10 w-full">
           <div className="max-w-2xl">
             <h1 className=" lg:text-7xl font-extrabold mb-4 leading-tight font-[BIZ_UDPMincho]">
               An AI-powered Insurance Prediction System
@@ -170,6 +172,7 @@ const LandingPage = () => {
                   <div>
                     <button
                       to="/register"
+                      onClick={() => navigate("/register")}
                       className="flex items-center gap-2 text-base px-6 py-2 rounded-full bg-[#F28B82] text-white hover:bg-[#e76d68] transition-colors duration-300 ease-in-out"
                     >
                       <FaUserPlus />
@@ -184,17 +187,17 @@ const LandingPage = () => {
           <img
             src={insurancePerson}
             alt="Insurance Person"
-            className="shadow-lg h-96  "
+            className="shadow-lg h-96 rounded-xl "
           />
-
-          {messageVisible && (
-            <>
-              {/* <p className="mt-5">We are busy. Don't try to contact us.</p> */}
-              <span>We are busy. Don't try to contact us.</span>
-            </>
-          )}
         </div>
       </section>
+      {messageVisible && (
+        <>
+          <span className="bg-[#3c5b62] pl-15 text-white">
+            We are busy. Don't try to contact us.
+          </span>
+        </>
+      )}
 
       {/* Features */}
       <section className="bg-[#3c5b62] text-white py-16 px-8 text-center">

@@ -18,8 +18,11 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  // Function to handle form submission
   const onSubmit = async (data) => {
     setIsLoading(true);
+
+    // Sends login request to the backend server with credentials
     try {
       const result = await login(data.email, data.password);
       if (result.success) {
@@ -36,6 +39,7 @@ const Login = () => {
   };
 
   return (
+    // Login page container to input email and password
     <div className="min-h-screen flex items-center justify-center bg-[#2f4f4f] px-4">
       <div className="bg-gradient-to-b from-[#0f2027] via-[#203a43] to-[#2c5364] text-white p-8 rounded-xl w-100 shadow-lg">
         <div className="flex flex-col items-center mb-6">
@@ -137,7 +141,7 @@ const Login = () => {
             Don't have an account?{" "}
             <Link
               to="/register"
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              className="text-orange-300 hover:text-orange-700 font-medium"
             >
               Sign up
             </Link>

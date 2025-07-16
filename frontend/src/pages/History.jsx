@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { healthPredictionAPI } from "../services/api";
 
@@ -9,11 +9,15 @@ const PredictionHistory = () => {
   const [deletingId, setDeletingId] = useState(null);
   const [predictions, setPredictions] = useState([]);
   const [filterType, setFilterType] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPredictions();
   }, []);
 
+  // Fetch predictions from the API
   const fetchPredictions = async () => {
     try {
       const response = await healthPredictionAPI.getPredictions();
@@ -68,6 +72,7 @@ const PredictionHistory = () => {
     );
   }
 
+  // Filter predictions based on selected type
   const filteredPredictions = predictions.filter((prediction) => {
     const matchesType = !filterType || prediction.insurance_type === filterType;
 
@@ -76,19 +81,19 @@ const PredictionHistory = () => {
 
   return (
     <div className="px-4 md:px-12 py-3">
-      <div className="flex items-center justify-between mb-2">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        {/* Title */}
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-800">
           Prediction History
         </h1>
 
         {/* Filters */}
-        <div className="md:w-48">
-          <label className="text-gray-700 mb-5">Filter by Type </label>
-
+        <div className="w-full md:w-60">
+          <label className="block text-gray-700 mb-1">Filter by Type</label>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="form-input bg-white mb-5 mt-1 "
+            className="form-input w-full bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">All Types</option>
             <option value="health">Health</option>
@@ -96,22 +101,64 @@ const PredictionHistory = () => {
           </select>
         </div>
       </div>
+
       <hr className="mb-5 border-gray-400" />
-      {loading ? (
-        <div className="text-center text-gray-500 py-8">
-          Loading prediction history...
+
+      {/* Modal for choosing prediction type; appears when 'Start by making your first prediction' button clicked */}
+      {/* That button appears when there is no prediction history/data */}
+      {showModal && (
+        <div className="fixed inset-0 bg bg-opacity-20 flex justify-center items-center backdrop-blur-md">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg font-semibold mb-4">
+              Choose prediction type
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Select the type of insurance you'd like to predict.
+            </p>
+
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  navigate("/main/health_prediction");
+                }}
+                className="px-4 py-2 bg-[#325259] rounded text-white hover:bg-rose-600"
+              >
+                Health Insurance
+              </button>
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  navigate("/main/car_prediction");
+                }}
+                className="px-4 py-2 bg-[#325259] text-white rounded hover:bg-rose-600"
+              >
+                Car Insurance
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-red-600 text-sm font-medium mt-2 transition-colors duration-300 ease-in-out"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
-      ) : filteredPredictions.length === 0 ? (
+      )}
+
+      {/* Prediction History Table */}
+      {filteredPredictions.length === 0 ? ( // If no predictions found, shows a message and a button to start a new prediction
         <div className="text-center py-10 text-gray-500">
           <p>No prediction history found.</p>
           <Link
-            to="/main/health_prediction"
-            className="mt-4 inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+            onClick={() => setShowModal(true)}
+            className="mt-4 inline-block bg-[#3490b1] text-white px-6 py-3 rounded-md hover:bg-[#05343e] transition"
           >
             Start by making your first prediction
           </Link>
         </div>
       ) : (
+        // If predictions are found, shows the table with predictions
         <div className="overflow-x-auto bg-white rounded-lg shadow">
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
@@ -145,7 +192,7 @@ const PredictionHistory = () => {
                   </td>
                   <td className=" py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
-                      {/* <butto
+                      {/* <button
                         onClick={() => setSelectedPrediction(prediction)}
                         className="text-blue-600 hover:text-blue-900"
                         title="View Details"
@@ -159,7 +206,7 @@ const PredictionHistory = () => {
                         disabled={deletingId === prediction.id}
                       >
                         {deletingId === prediction.id ? (
-                          <span>Deleting...</span> 
+                          <span>Deleting...</span>
                         ) : (
                           <>
                             <Trash2 className="w-4 h-4 mr-3" />

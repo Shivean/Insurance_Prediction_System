@@ -45,15 +45,12 @@ input[type="number"].remove-arrow {
 }
 /* Dashboard stats */
 .dashboard-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-148;
-  padding-left: 30px;
+  @apply grid grid-cols-1 xl:grid-cols-2 lg:grid-cols-3 gap-6 px-4 ml-4 mr-4;
 }
 
+
 .stat-card {
-  width: 540px;
-}
-.stat-card {
-  @apply bg-[#325259] rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200;
+  @apply w-full bg-[#325259] rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200;
 }
 
 .stat-value {
@@ -66,7 +63,7 @@ input[type="number"].remove-arrow {
 
 /* Custom button styles */
 .btn-primary {
-  @apply bg-[#325259] hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  @apply  bg-[#3490b1] hover:bg-[#05343e] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
 }
 
 .btn-secondary {
