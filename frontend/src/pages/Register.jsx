@@ -31,7 +31,15 @@ const RegisterForm = () => {
         toast.success("Registration successful!");
         navigate("/login");
       } else {
-        toast.error(result.error || "Registration failed");
+        const errors = result.error;
+
+        // Converts object to readable string
+        const message = Object.values(errors).flat().join(" ");
+
+        toast.error(
+          message.charAt(0).toUpperCase() + message.slice(1) ||
+            "Registration failed."
+        );
       }
     } catch (error) {
       toast.error("An error occurred during registration");
@@ -42,7 +50,8 @@ const RegisterForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#2f4f4f] px-4">
-      <div className="bg-gradient-to-b from-[#0f2027] via-[#203a43] to-[#2c5364] text-white p-8 mt-4 mb-4 rounded-xl w-100 max-w-md shadow-lg">
+      <div className="bg-gradient-to-b from-[#0f2027] to-[#2c5364] text-white p-8 mt-4 mb-4 rounded-xl w-100 max-w-md shadow-lg">
+        {/* <div className="bg-gradient-to-b from-[#0f2027]  to-[#2c5364] text-white p-8 mt-4 mb-4 rounded-xl w-100 max-w-md shadow-lg"> */}
         <div className="flex flex-col items-center mb-6">
           <img src={logo} alt="InsurePredict Logo" className="h-13 mb-8" />
           <div className="w-16 h-16 border-2 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -71,7 +80,7 @@ const RegisterForm = () => {
                     },
                   })}
                   placeholder="First Name"
-                  className="form-input w-full pl-3 "
+                  className="form-input w-full pl-3 outline-2 outline-gray-600"
                 />
                 {errors.first_name && (
                   <p className="text-red-500 text-sm mt-1">
@@ -92,7 +101,7 @@ const RegisterForm = () => {
                     },
                   })}
                   placeholder="Last Name"
-                  className="form-input w-full pl-3"
+                  className="form-input w-full pl-3 outline-2 outline-gray-600"
                 />
                 {errors.last_name && (
                   <p className="text-red-500 text-sm mt-1">
@@ -119,7 +128,7 @@ const RegisterForm = () => {
                   },
                 })}
                 placeholder="Enter your Email"
-                className="form-input pl-10"
+                className="form-input pl-10 outline-2 outline-gray-600"
                 style={{ textIndent: "25px" }}
               />
             </div>
@@ -145,7 +154,7 @@ const RegisterForm = () => {
                   },
                 })}
                 placeholder="Enter your phone number"
-                className="form-input pl-10 pr-10"
+                className="form-input pl-10 pr-10 outline-2 outline-gray-600"
                 style={{ textIndent: "25px" }}
               />
             </div>
@@ -176,7 +185,7 @@ const RegisterForm = () => {
                       "Password must contain at least one uppercase letter, one lowercase letter, and one number",
                   },
                 })}
-                className="form-input pl-10 pr-10 "
+                className="form-input pl-10 pr-10 outline-2 outline-gray-600"
                 style={{ textIndent: "25px" }}
               />
               <button
@@ -211,7 +220,7 @@ const RegisterForm = () => {
                   validate: (value) =>
                     value === password || "Passwords do not match",
                 })}
-                className="form-input pl-10 pr-10"
+                className="form-input pl-10 pr-10 outline-2 outline-gray-600"
                 style={{ textIndent: "25px" }}
               />
               <button
@@ -238,10 +247,13 @@ const RegisterForm = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-[#c1664e] text-</div>white w-40 py-2 rounded-md hover:bg-[#a5543f] transition-all duration-200 flex items-center justify-center gap-2"
+              className="btn-primary w-40 flex justify-center gap-2"
             >
               {isLoading ? (
-                <div className="loading-spinner w-5 h-5"></div>
+                <>
+                  <div className="loading-spinner w-5 h-5"></div>
+                  <p>Creating...</p>
+                </>
               ) : (
                 "Create Account"
               )}
@@ -251,8 +263,8 @@ const RegisterForm = () => {
 
         {/* Login link */}
         <div className="mt-6 text-center">
-          <p className="text-gray-400">
-            Already have an account?{" "}
+          <p className="text-gray-400 flex gap-2 justify-center">
+            Already have an account?
             <Link
               to="/login"
               className="text-orange-300 hover:text-orange-700 font-medium"

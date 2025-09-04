@@ -29,7 +29,16 @@ const Login = () => {
         toast.success("Login successful!");
         navigate("/main");
       } else {
-        toast.error(result.error || "Login failed");
+        // toast.error(result.error || "Login failed");
+        const errors = result.error;
+
+        // Converts object to readable string
+        const message = Object.values(errors).flat().join(" ");
+
+        toast.error(
+          message.charAt(0).toUpperCase() + message.slice(1) ||
+            "Login failed."
+        );
       }
     } catch (error) {
       toast.error("An error occurred during login");
@@ -68,7 +77,7 @@ const Login = () => {
                   },
                 })}
                 placeholder="Enter your Email"
-                className="form-input"
+                className="form-input outline-2 outline-gray-600"
                 style={{ textIndent: "25px" }}
               />
             </div>
@@ -94,7 +103,7 @@ const Login = () => {
                     message: "Password must be at least 8 characters",
                   },
                 })}
-                className="form-input"
+                className="form-input outline-2 outline-gray-600"
                 style={{ textIndent: "25px" }}
               />
               <button
@@ -121,10 +130,14 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-[#c1664e] text-</div>white w-40 py-2 rounded-md hover:bg-[#a5543f] transition-all duration-200 flex items-center justify-center gap-2"
+              className="btn-primary w-40 flex items-center justify-center gap-2"
             >
               {isLoading ? (
+                <>
                 <div className="loading-spinner w-5 h-5"></div>
+                <p>Signing in...</p>
+                
+                </>
               ) : (
                 <>
                   <LogIn className="w-5 h-5" />
@@ -137,8 +150,8 @@ const Login = () => {
 
         {/* Login link */}
         <div className="mt-6 text-center">
-          <p className="text-gray-400">
-            Don't have an account?{" "}
+          <p className="text-gray-400 flex justify-center gap-2">
+            Don't have an account?
             <Link
               to="/register"
               className="text-orange-300 hover:text-orange-700 font-medium"

@@ -1,15 +1,17 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Calculator, CheckCircle, DollarSign, AlertCircle } from "lucide-react";
-import { carPredictionAPI } from "../services/api";
+// import { carPredictionAPI } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const CarInsurancePrediction = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [prediction, setPrediction] = useState(null);
   const navigate = useNavigate();
-
+  const { carInsurancePredictionAPI } = useAuth();
+  
   const {
     register,
     handleSubmit,
@@ -19,11 +21,69 @@ const CarInsurancePrediction = () => {
 
   // Handles form submission
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    try {
-      const res = await carPredictionAPI.createPrediction(data);
-      setPrediction(res.data);
-      toast.success("Prediction successful!");
+    
+    
+      // Form validation
+      if (data.driver_age < 18) {
+        toast.error("Driver must be 18 years old or older.");
+        return false;
+      } else if (data.driver_age > 80) {
+        toast.error("Driver must be under 80 years old.");
+        return false;
+      }
+
+      if (data.driver_age == data.driving_experience) {
+        toast.error("Driver age and driving experience cannot be equal");
+        return false;
+      }
+
+      if (data.driver_age - data.driving_experience < 18) {
+        toast.error("Please enter a valid driving experience");
+        return false;
+      }
+
+      if (data.car_mfg_year < 1950) {
+        toast.error("Manufacturing year must be later than 1950.");
+        return false;
+      } else if (data.car_mfg_year > (new Date().getFullYear())) {
+        toast.error("Manufacturing year cannot be in the future.");
+        return false;
+      }
+
+      if (data.driving_experience < 0) {
+        toast.error("Driving experience must be zero or more.");
+        return false;
+      }
+      if (data.prv_accident < 0) {
+        toast.error("Previous accident cannot be negative.");
+        return false;
+      }
+
+      if (data.annual_mileage < 0) {
+        toast.error("Mileage cannot be negative.");
+        return false;
+      }
+
+      // Call the car insurance prediction API
+      setIsLoading(true);
+      try {
+      const result = await carInsurancePredictionAPI(data);
+      if (result.success) {
+        setPrediction(result.data);
+        toast.success("Prediction successful!");
+        // console.log("prediction");
+        // console.log(result.data);
+      } else {
+        const errors = result.error;
+
+        // Converts object to readable string
+        const message = Object.values(errors).flat().join(" ");
+
+        toast.error(
+          message.charAt(0).toUpperCase() + message.slice(1) ||
+            "Registration failed."
+        );
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || "Prediction failed.");
     } finally {
@@ -77,14 +137,14 @@ const CarInsurancePrediction = () => {
             </div>
           </div>
         </div>
-        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="info-card mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-start space-x-3">
             <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div>
               <h4 className="text-sm font-medium text-blue-900 mb-1">
                 Important Information
               </h4>
-              <p className="text-sm text-blue-700">
+              <p className="text-sm">
                 This prediction is based on machine learning algorithms and
                 historical data. The actual premium may vary based on additional
                 factors and insurance provider policies. This is for
@@ -98,26 +158,28 @@ const CarInsurancePrediction = () => {
     );
   }
 
-
   return (
-    <div className="bg-gradient-to-b from-[#37474F] to-[#263238] text-white p-8 rounded-3xl shadow-lg max-w-4xl mx-auto">
-      <h2 className="text-3xl font-semibold text-center mb-10">
-        Car Insurance Premium Prediction Form
+    // <div className="text-white p-8 rounded-3xl shadow-lg max-w-4xl mx-auto border border-gray-800">
+    <div className="prediction-form-bg text-white p-8 rounded-3xl shadow-lg w-full ">
+      <h2 className="text-3xl font-semibold text-center mb-8">
+        Car Insurance Premium Prediction
       </h2>
+      <p className="text-gray-400">Please fill in the driver's and car's details to estimate the premium</p>
+      <hr className="my-5 opacity-10"/>
 
       {/* Car Insurance prediction form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-1 md:grid-cols-2 gap-8"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"
       >
         {/* Driver’s Age */}
         <div>
-          <label className="block mb-2 font-semibold">Driver's Age:</label>
+          <label className="form-label">Driver's Age</label>
           <input
             type="number"
             {...register("driver_age", { required: "Required" })}
             placeholder="Enter the Driver's Age"
-            className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+            className="form-input remove-arrow"
           />
           {errors.driver_age && (
             <p className="text-red-500 text-sm mt-1">
@@ -128,14 +190,14 @@ const CarInsurancePrediction = () => {
 
         {/* Driving Experience */}
         <div>
-          <label className="block mb-2 font-semibold">
-            Driving Experience:
+          <label className="form-label">
+            Driving Experience
           </label>
           <input
             type="number"
             {...register("driving_experience", { required: "Required" })}
-            placeholder="Enter the Driving Experience (in years)"
-            className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+            placeholder="Driving Experience (in years)"
+            className="form-input remove-arrow"
           />
           {errors.driving_experience && (
             <p className="text-red-500 text-sm mt-1">
@@ -146,12 +208,12 @@ const CarInsurancePrediction = () => {
 
         {/* Annual Mileage */}
         <div>
-          <label className="block mb-2 font-semibold">Annual Mileage:</label>
+          <label className="form-label">Annual Mileage</label>
           <input
             type="number"
             {...register("annual_mileage", { required: "Required" })}
-            placeholder="Enter the Annual Mileage of Vehicle (x1000km)"
-            className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+            placeholder="Annual Mileage of Car (x1000km)"
+            className="form-input remove-arrow text-ellipsis"
           />
           {errors.annual_mileage && (
             <p className="text-red-500 text-sm mt-1">
@@ -162,14 +224,14 @@ const CarInsurancePrediction = () => {
 
         {/* Car Manufacturing Year */}
         <div>
-          <label className="block mb-2 font-semibold">
-            Car Manufacturing Year:
+          <label className="form-label">
+            Car Manufacturing Year
           </label>
           <input
             type="number"
             {...register("car_mfg_year", { required: "Required" })}
             placeholder="Enter the Car Manufacturing Year (in AD)"
-            className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+            className="form-input remove-arrow"
           />
           {errors.car_mfg_year && (
             <p className="text-red-500 text-sm mt-1">
@@ -180,14 +242,14 @@ const CarInsurancePrediction = () => {
 
         {/* Previous Accidents */}
         <div className="md:col-span-1">
-          <label className="block mb-2 font-semibold">
-            Previous Accidents:
+          <label className="form-label">
+            Previous Accidents
           </label>
           <input
             type="number"
             {...register("prv_accident", { required: "Required" })}
-            placeholder="Enter the number of previous Accidents"
-            className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+            placeholder="Enter the no. of previous Accidents"
+            className="form-input remove-arrow text-ellipsis"
           />
           {errors.prv_accident && (
             <p className="text-red-500 text-sm mt-1">
@@ -203,7 +265,7 @@ const CarInsurancePrediction = () => {
           type="submit"
           onClick={handleSubmit(onSubmit)}
           disabled={isLoading}
-          className="btn-primary px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+          className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
         >
           {isLoading ? (
             <>
@@ -218,12 +280,6 @@ const CarInsurancePrediction = () => {
           )}
         </button>
       </div>
-
-      {/* Predicted Result */}
-      <p className="text-white mt-6 text-right text-lg hidden">
-        The Predicted Amount for your choices is{" "}
-        <span className="font-semibold">$200</span>
-      </p>
     </div>
   );
 };

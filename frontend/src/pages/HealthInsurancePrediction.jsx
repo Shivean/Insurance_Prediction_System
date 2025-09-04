@@ -35,8 +35,39 @@ const HealthInsurancePrediction = () => {
       ...rest,
       height: heightInCM,
     };
-    setIsLoading(true);
 
+    // Form Validation
+
+    if (data.age < 18) {
+      toast.error("Age must be at least 18 years old.");
+      return false;
+    } else if (data.age > 110) {
+      toast.error("Please enter a valid age.");
+      return false;
+    }
+
+    if(heightInCM > 215 || heightInCM < 55) {
+      toast.error("Please enter a valid height.");
+      return false;
+    }
+
+    if (data.weight < 15) {
+      toast.error("Weight must be more than 15 kg.");
+      return false;
+    } else if (data.weight > 300) {
+      toast.error("Weight must be under 300 kg.");
+      return false;
+    }
+
+    if (data.no_of_major_surgery < 0) {
+      toast.error("No. of surgery cannot be negative.");
+      return false;
+    } else if (data.no_of_major_surgery > 100) {
+      toast.error("Please enter a valid no. of surgery.");
+      return false;
+    }
+
+    setIsLoading(true);
     // Calls the API to create a prediction
     try {
       const res = await healthPredictionAPI.createPrediction(payload);
@@ -62,8 +93,8 @@ const HealthInsurancePrediction = () => {
           <label
             key={option}
             className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer ${
-              watch(name) === option ? "bg-[#4A6572]" : "bg-[#2B3A42]"
-            } hover:bg-[#3A4B55] transition`}
+              watch(name) === option ? "bg-[#3490b1]" : "bg-[#2B3A42]"
+            } hover:ring-2 hover:ring-[#3490b1] transition`}
           >
             <input
               type="radio"
@@ -121,14 +152,14 @@ const HealthInsurancePrediction = () => {
           </div>
         </div>
 
-        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="info-card mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-start space-x-3">
             <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div>
-              <h4 className="text-sm font-medium text-blue-900 mb-1">
+              <h4 className="text-sm font-medium text-[#0D47A1] mb-1">
                 Important Information
               </h4>
-              <p className="text-sm text-blue-700">
+              <p className="text-sm">
                 This prediction is based on machine learning algorithms and
                 historical data. The actual premium may vary based on additional
                 factors and insurance provider policies. This is for
@@ -144,10 +175,12 @@ const HealthInsurancePrediction = () => {
 
   return (
     // Main form for health insurance prediction
-    <div className="bg-gradient-to-b from-[#37474F] to-[#263238] text-white p-8 rounded-3xl shadow-lg max-w-4xl mx-auto">
+    <div className="prediction-form-bg text-white p-8 rounded-3xl shadow-lg w-full mx-auto">
       <h2 className="text-3xl font-semibold text-center mb-8 ">
-        Health Insurance Premium Prediction Form
+        Health Insurance Premium Prediction
       </h2>
+      <p className="text-gray-400">Please provide your personal and health details to estimate your insurance premium.</p>
+      <hr className="opacity-20 my-5"/>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -155,14 +188,14 @@ const HealthInsurancePrediction = () => {
       >
         {/* Height */}
         <div>
-          <label className="block mb-2 font-semibold">Height:</label>
+          <label className="form-label">Height</label>
           <div className="flex gap-4">
             <div>
               <input
                 type="number"
                 placeholder="ft"
                 {...register("heightFt", { required: "Required" })}
-                className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+                className="form-input remove-arrow"
               />
               {errors.heightFt && (
                 <p className="text-red-500 text-sm mt-1">
@@ -176,7 +209,7 @@ const HealthInsurancePrediction = () => {
                 type="number"
                 {...register("heightIn", { required: "Required" })}
                 placeholder="inches"
-                className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+                className="form-input remove-arrow"
               />
               {errors.heightIn && (
                 <p className="text-red-500 text-sm mt-1">
@@ -189,12 +222,13 @@ const HealthInsurancePrediction = () => {
 
         {/* Weight */}
         <div>
-          <label className="block mb-2 font-semibold">Weight:</label>
+          <label className="form-label">Weight</label>
           <input
             type="number"
+            step="any"
             placeholder="kg"
             {...register("weight", { required: "Required" })}
-            className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+            className="form-input remove-arrow"
           />
           {errors.weight && (
             <p className="text-red-500 text-sm mt-1">{errors.weight.message}</p>
@@ -202,8 +236,8 @@ const HealthInsurancePrediction = () => {
         </div>
 
         {/* Radio fields */}
-        <fieldset className="md:col-span-2 border border-gray-400 p-6 rounded-2xl">
-          <legend className="text-lg font-semibold mb-4 px-2">
+        <fieldset className="md:col-span-2 border border-gray-200 p-6 rounded-2xl">
+          <legend className="form-label">
             Medical History
           </legend>
           <div className="grid md:grid-cols-2 gap-6">
@@ -224,14 +258,14 @@ const HealthInsurancePrediction = () => {
 
         {/* Surgeries */}
         <div>
-          <label className="block mb-2 font-semibold">
-            Number of Major Surgeries:
+          <label className="form-label">
+            Number of Major Surgeries
           </label>
           <input
             type="number"
-            placeholder="0 - X"
+            placeholder="Enter the no. of surgeries"
             {...register("no_of_major_surgery", { required: "Required" })}
-            className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+            className="form-input remove-arrow"
           />
           {errors.no_of_major_surgery && (
             <p className="text-red-500 text-sm mt-1">
@@ -242,12 +276,12 @@ const HealthInsurancePrediction = () => {
 
         {/* Age */}
         <div>
-          <label className="block mb-2 font-semibold">Age:</label>
+          <label className="form-label">Age</label>
           <input
             type="number"
             placeholder="Enter the age"
             {...register("age", { required: "Required" })}
-            className="w-full rounded-full px-4 py-2 text-gray-100 bg-transparent border border-gray-300 placeholder-gray-400 focus:outline-none remove-arrow"
+            className="form-input remove-arrow"
           />
           {errors.age && (
             <p className="text-red-500 text-sm mt-1">{errors.age.message}</p>
@@ -259,7 +293,7 @@ const HealthInsurancePrediction = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="btn-primary px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
           >
             {isLoading ? (
               <>

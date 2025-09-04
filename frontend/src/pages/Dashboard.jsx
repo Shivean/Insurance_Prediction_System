@@ -100,8 +100,8 @@ const Dashboard = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg bg-opacity-20 flex justify-center items-center backdrop-blur-md">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h3 className="text-lg font-semibold mb-4">
+          <div className="modal-bg border border-gray-200 p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg text-gray-800 font-semibold mb-4">
               Choose prediction type
             </h3>
             <p className="text-gray-600 mb-4">
@@ -114,7 +114,7 @@ const Dashboard = () => {
                   setShowModal(false);
                   navigate("/main/health_prediction");
                 }}
-                className="px-4 py-2 bg-[#325259] rounded text-white hover:bg-rose-600"
+                className="btn-primary"
               >
                 Health Insurance
               </button>
@@ -123,13 +123,13 @@ const Dashboard = () => {
                   setShowModal(false);
                   navigate("/main/car_prediction");
                 }}
-                className="px-4 py-2 bg-[#325259] text-white rounded hover:bg-rose-600"
+                className="btn-primary"
               >
                 Car Insurance
               </button>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-red-600 text-sm font-medium mt-2 transition-colors duration-300 ease-in-out"
+                className="btn-secondary"
               >
                 Cancel
               </button>
@@ -190,29 +190,30 @@ const Dashboard = () => {
           </div>
         ) : (
           // If there are recent predictions, displays them in a table
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
+          <div className="rounded-lg overflow-hidden">
+            <table className="w-full bg-white">
+              <thead className="table-header table-fixed text-left text-xs text-gray-500 uppercase tracking-wider">
+              {/* <thead className="bg-gray-50 dark:bg-[#1f2937]"> */}
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3">
                     Insurance Type
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3">
                     Age
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3">
                     Premium
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 text-left">
                 {recentPredictions.map((prediction) => (
                   <tr key={prediction.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div className="flex items-center">
+                      <div className="flex items-center ">
                         <Calendar className="w-4 h-4 text-gray-400 mr-2" />
                         {formatDate(prediction?.created_at)}
                       </div>

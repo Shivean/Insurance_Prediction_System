@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Trash2 } from "lucide-react";
+import { Calendar, Trash2, Eye, Info, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { healthPredictionAPI } from "../services/api";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 const PredictionHistory = () => {
   const [loading, setLoading] = useState(true);
@@ -10,6 +11,8 @@ const PredictionHistory = () => {
   const [predictions, setPredictions] = useState([]);
   const [filterType, setFilterType] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedPrediction, setSelectedPrediction] = useState(null);
 
   const navigate = useNavigate();
 
@@ -43,7 +46,10 @@ const PredictionHistory = () => {
         toast.error("Failed to delete prediction");
       } finally {
         setDeletingId(null);
+        setShowDetailModal(false);
       }
+    } else {
+      setDeletingId(null);
     }
   };
 
@@ -93,9 +99,9 @@ const PredictionHistory = () => {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="form-input w-full bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="form-input bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            <option value="">All Types</option>
+            <option value="" className="">All Types</option>
             <option value="health">Health</option>
             <option value="car">Car</option>
           </select>
@@ -108,8 +114,8 @@ const PredictionHistory = () => {
       {/* That button appears when there is no prediction history/data */}
       {showModal && (
         <div className="fixed inset-0 bg bg-opacity-20 flex justify-center items-center backdrop-blur-md">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h3 className="text-lg font-semibold mb-4">
+          <div className="modal-bg p-6 border border-gray-200 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg text-gray-800 font-semibold mb-4">
               Choose prediction type
             </h3>
             <p className="text-gray-600 mb-4">
@@ -122,7 +128,7 @@ const PredictionHistory = () => {
                   setShowModal(false);
                   navigate("/main/health_prediction");
                 }}
-                className="px-4 py-2 bg-[#325259] rounded text-white hover:bg-rose-600"
+                className="btn-primary"
               >
                 Health Insurance
               </button>
@@ -131,13 +137,13 @@ const PredictionHistory = () => {
                   setShowModal(false);
                   navigate("/main/car_prediction");
                 }}
-                className="px-4 py-2 bg-[#325259] text-white rounded hover:bg-rose-600"
+                className="btn-primary"
               >
                 Car Insurance
               </button>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-red-600 text-sm font-medium mt-2 transition-colors duration-300 ease-in-out"
+                className="btn-danger"
               >
                 Cancel
               </button>
@@ -148,60 +154,70 @@ const PredictionHistory = () => {
 
       {/* Prediction History Table */}
       {filteredPredictions.length === 0 ? ( // If no predictions found, shows a message and a button to start a new prediction
-        <div className="text-center py-10 text-gray-500">
+        <div className="text-center py-10 space-y-6 text-gray-500">
           <p>No prediction history found.</p>
-          <Link
+          <button
             onClick={() => setShowModal(true)}
-            className="mt-4 inline-block bg-[#3490b1] text-white px-6 py-3 rounded-md hover:bg-[#05343e] transition"
+            className="btn-primary"
           >
             Start by making your first prediction
-          </Link>
+          </button>
         </div>
       ) : (
         // If predictions are found, shows the table with predictions
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
+        <div className="shadow overflow-hidden rounded-xl">
+          <table className="w-full text-sm text-center">
+            <thead className="table-header uppercase text-xs tracking-wider">
               <tr>
-                <th className="px-6 py-4">SN</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Type</th>
-                <th className="px-6 py-4">Age</th>
-                <th className="px-0 py-4">Predicted Premium</th>
-                <th className="px-6 py-4">Action</th>
+                <th className="px-8 py-4">SN</th>
+                <th className="px-8 py-4">Date</th>
+                <th className="px-8 py-4">Type</th>
+                <th className="px-8 py-4">Age</th>
+                <th className="px-8 py-4 whitespace-nowrap">Predicted Premium</th>
+                <th className="px-8 py-4">Action</th>
               </tr>
             </thead>
-            <tbody className="text-gray-800 divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 bg-white text-center">
               {filteredPredictions.map((prediction, index) => (
-                <tr key={prediction.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 items-center">{index + 1}</td>
+                <tr key={prediction.id}>
+                  <td className="px-8 py-4 items-center ">{index + 1}</td>
 
-                  <td className="px-6 py-4 whitespace-nowrap flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-400" />
-                    {formatDate(prediction.created_at)}
+                  <td className="px-8 py-4 whitespace-nowrap">
+                    <div className="flex items-center justify-center gap-2">
+                      <Calendar className="w-4 h-4 text-gray-400" />
+                      {formatDate(prediction.created_at)}
+                    </div>
                   </td>
 
-                  <td className="px-6 py-4">{prediction.insurance_type}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-8 py-4">{prediction.insurance_type}</td>
+
+                  <td className="px-8 py-4">
                     {prediction.input_data.age ||
                       prediction.input_data.driver_age}
                   </td>
 
-                  <td className="px-0 py-4 font-medium text-green-600 ">
+                  <td className="px-8 py-4 font-medium text-green-600 ">
                     {formatCurrency(prediction.predicted_premium)}
                   </td>
-                  <td className=" py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center space-x-2">
-                      {/* <button
-                        onClick={() => setSelectedPrediction(prediction)}
-                        className="text-blue-600 hover:text-blue-900"
-                        title="View Details"
+
+                  <td className="px-8 py-4 whitespace-nowrap text-sm ">
+                    <div className="flex gap-5 justify-between">
+                      <button
+                        // onClick={() => showPredictionDetail(prediction.id)}
+                        onClick={() => {
+                          setSelectedPrediction(prediction);
+                          setShowDetailModal(true);
+                        }}
+                        className="btn-primary w-full flex items-center justify-center"
+                        // title="View Details"
                       >
-                        <Eye className="w-4 h-4" />
-                      </button> */}
+                        <Eye className="w-4 h-4 mr-3" />
+                        <span>Detail</span>
+                      </button>
+
                       <button
                         onClick={() => handleDelete(prediction.id)}
-                        className="btn-danger flex items-center justify-center"
+                        className="btn-danger w-full flex items-center justify-center"
                         title="Delete"
                         disabled={deletingId === prediction.id}
                       >
@@ -220,6 +236,241 @@ const PredictionHistory = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Displays the details using modal */}
+      {showDetailModal && selectedPrediction && (
+        <div className="fixed inset-0 flex justify-center items-center backdrop-blur-md">
+          <div className="modal-bg p-6 rounded-lg shadow-lg w-96 border border-gray-300">
+            <div className="flex items-center mb-5 justify-between">
+              <div className="flex items-center">
+                <h3 className="text-lg font-semibold mr-2 items-center">
+                  Prediction Details
+                </h3>
+                <Info
+                  className="size-5 opacity-50"
+                  data-tooltip-id="my-tooltip-1"
+                />
+
+                <ReactTooltip
+                  id="my-tooltip-1"
+                  place="right-end"
+                  variant="info"
+                  style={{
+                    minWidth: "200px",
+                    width: "20vw",
+                    height: "auto",
+                    textAlign: "justify",
+                  }}
+                  content="This prediction is based on machine learning algorithms and
+                historical data. The actual premium may vary based on additional
+                factors and insurance provider policies. This is for
+                informational & educational purposes only and should not be considered as a
+                final quote."
+                />
+              </div>
+
+              <X
+                className="size-6 opacity-60 hover:opacity-100 cursor-pointer"
+                onClick={() => setShowDetailModal(false)}
+              />
+            </div>
+
+            {selectedPrediction.insurance_type === "health" ? (
+              <div className="rounded overflow-hidden border-2 border-gray-200">
+                <table className="border border-gray-200 min-w-full rounded-lg">
+                  <tbody>
+                    <tr>
+                      <td className="p-2 border border-gray-200">Age</td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.age} years
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">Height</td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.height} cm
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">Weight</td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.weight} kg
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">
+                        Has Diabetes
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.has_diabetes
+                          ? "Yes"
+                          : "No"}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">
+                        Any Allergies
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.any_allergies
+                          ? "Yes"
+                          : "No"}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">
+                        Any Body Transplant
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.any_bodytransplant
+                          ? "Yes"
+                          : "No"}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">
+                        Has Pressure Issue
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.has_pressure_issue
+                          ? "Yes"
+                          : "No"}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">
+                        Any Chronic Disease
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.any_chronic_disease
+                          ? "Yes"
+                          : "No"}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">
+                        No. of Major Surgery
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.no_of_major_surgery}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 border border-gray-200">
+                        Family History of Cancer
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data
+                          .history_of_cancer_in_family
+                          ? "Yes"
+                          : "No"}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 font-semibold border border-gray-200">
+                        Total Prediction
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        $ {selectedPrediction.predicted_premium}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="rounded overflow-hidden border-2 border-gray-200">
+                <table className="border border-gray-200 rounded-lg min-w-full">
+                  <thead>
+                    <tr>
+                      <td className="p-2  border border-gray-200">
+                        Driver's Age
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.driver_age} years
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2  border border-gray-200">
+                        Car Manufacturing Year
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.car_mfg_year} AD
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2  border border-gray-200">
+                        Previous Accidents
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.prv_accident}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2  border border-gray-200">
+                        Annual Mileage
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.annual_mileage * 1000} km
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2  border border-gray-200">
+                        Driving Experience
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        {selectedPrediction.input_data.driving_experience} years
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="p-2 font-semibold border border-gray-200">
+                        Predicted Premium
+                      </td>
+                      <td className="p-2 border border-gray-200">
+                        $ {selectedPrediction.predicted_premium}
+                      </td>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            )}
+
+            <div className="text-right">
+              <button
+                onClick={() => handleDelete(selectedPrediction.id)}
+                className="bg-white rounded-lg py-2 px-4 text-sm font-medium text-red-600 hover:bg-red-600 hover:text-white cursor-pointer"
+              >
+                {deletingId === selectedPrediction.id ? (
+                  <span>Deleting...</span>
+                ) : (
+                  <span>Delete</span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setShowDetailModal(false)}
+                className="btn-primary text-gray-400 text-sm ml-2 mt-2 "
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

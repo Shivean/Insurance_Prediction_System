@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import ThemeToggle from "./components/ThemeToggle";
 import {
   BrowserRouter,
   Routes,
@@ -43,62 +45,64 @@ const ProtectedRoute = () => {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          {/* Public Routes */}
-          <Route index element={<LandingPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/about" element={<About />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            {/* Public Routes */}
+            <Route index element={<LandingPage />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/about" element={<About />} />
 
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/main" element={<MainLayout />}>
-              {/* index route under /main */}
-              <Route index element={<Dashboard />} />
-              {/* <Route path="dashboard" element={<Dashboard />} /> */}
-              <Route
-                path="health_prediction"
-                element={<HealthInsurancePrediction />}
-              />
-              <Route
-                path="car_prediction"
-                element={<CarInsurancePrediction />}
-              />
-              <Route path="profile" element={<ProfilePage />} />
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/main" element={<MainLayout />}>
+                {/* index route under /main */}
+                <Route index element={<Dashboard />} />
+                {/* <Route path="dashboard" element={<Dashboard />} /> */}
+                <Route
+                  path="health_prediction"
+                  element={<HealthInsurancePrediction />}
+                />
+                <Route
+                  path="car_prediction"
+                  element={<CarInsurancePrediction />}
+                />
+                <Route path="profile" element={<ProfilePage />} />
 
-              <Route path="history" element={<History />} />
+                <Route path="history" element={<History />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
+          </Routes>
 
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: "#363636",
-              color: "#fff",
-            },
-            success: {
-              duration: 3000,
-              iconTheme: {
-                primary: "#10b981",
-                secondary: "#fff",
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 6000,
+              style: {
+                background: "#363636",
+                color: "#fff",
               },
-            },
-            error: {
-              duration: 5000,
-              iconTheme: {
-                primary: "#ef4444",
-                secondary: "#fff",
+              success: {
+                duration: 6000,
+                iconTheme: {
+                  primary: "#10b981",
+                  secondary: "#fff",
+                },
               },
-            },
-          }}
-        />
-      </BrowserRouter>
-    </AuthProvider>
+              error: {
+                duration: 5000,
+                iconTheme: {
+                  primary: "#ef4444",
+                  secondary: "#fff",
+                },
+              },
+            }}
+          />
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );

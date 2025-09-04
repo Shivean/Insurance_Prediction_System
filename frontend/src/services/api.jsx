@@ -2,7 +2,9 @@ import axios from 'axios';
 
 // This handles API requests to the backend server.
 export const api = axios.create({
-  baseURL: 'https://ips-backend-vu6z.onrender.com', // This is where backend is hosted
+  // baseURL: 'http://localhost:8000', 
+  // baseURL: 'https://ips-backend-vu6z.onrender.com', // This is where backend is hosted
+  baseURL: import.meta.env.VITE_API_URL, // Using the environment variable
   headers: {
     'Content-Type': 'application/json',
   },

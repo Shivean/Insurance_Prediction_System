@@ -1,17 +1,20 @@
 import React from "react";
 import { Laptop, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ThemeToggle from "../components/ThemeToggle";
 
 const About = () => {
   const navigate = useNavigate();
   return (
     <div className="bg-[#2f4f4f] min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-4xl mt-5 mb-5 mx-auto px-6 py-8 text-gray-800 bg-[#cfe8ed] rounded-lg shadow-xl">
-        <div>
+      <div className="max-w-4xl mt-5 mb-5 mx-auto px-6 py-8 text-gray-800 layout-main rounded-lg shadow-xl">
+      {/* <div className="max-w-4xl mt-5 mb-5 mx-auto px-6 py-8 text-gray-800 bg-[#cfe8ed] rounded-lg shadow-xl"> */}
+        <div className="flex justify-between">
           <Home
-            className="inline-block mr-2 text-black hover:text-orange-300 cursor-pointer transition-colors duration-300 "
+            className="inline-block mr-2 text-gray-900 hover:text-orange-300 cursor-pointer transition-colors duration-300 "
             onClick={() => navigate("/")}
           />
+          <ThemeToggle />
         </div>
 
         <h1 className="text-5xl font-bold mb-8 text-center text-black-800">
@@ -36,9 +39,10 @@ const About = () => {
           develop a real-world solution that is practical and easy to use.
         </p>
 
-        <div className="p-6 rounded-lg shadow-[10px_10px_150px_rgba(0,0,0,0.2)] mt-14 mb-2">
+        <div className="p-6 rounded-lg border border-gray-200 shadow-[10px_10px_150px_rgba(0,0,0,0.2)] mt-14 mb-2">
           <h2 className="text-3xl font-semibold mb-4 text-black-700">
-            <Laptop className="inline-block mr-2 text-black h-8 w-8" />
+            <Laptop className="inline-block mr-2 text-gray-900 size-10 pb-2" />
+            {/* <Laptop className="inline-block mr-2 text-gray-900 h-8 w-8" /> */}
             Technology Stack
           </h2>
           <ul className="list-disc list-inside mb-6 text-lg text-gray-600">

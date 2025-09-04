@@ -13,10 +13,9 @@ import {
   Lock,
   Eye,
   EyeOff,
-} from "lucide-react";  // These are the icons used in the profile page
+} from "lucide-react"; // These are the icons used in the profile page
 
 const ProfilePage = () => {
-
   const {
     updateProfile,
     loading: authLoading,
@@ -30,6 +29,8 @@ const ProfilePage = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+  const [changing, setPasswordChanging] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   // For profile update
   const {
@@ -45,6 +46,7 @@ const ProfilePage = () => {
     handleSubmit: handleSubmitPassword,
     formState: { errors: errorsPassword },
     watch: watchPassword,
+    reset: resetPasswordForm,
   } = useForm();
 
   useEffect(() => {
@@ -86,20 +88,28 @@ const ProfilePage = () => {
   };
 
   const handleChangePassword = async (data) => {
-    setLoading(true);
+    setPasswordChanging(true);
     try {
       const result = await changePassword(data);
       if (result.success) {
         toast.success("Password changed successfully!");
         setIsEditing(false);
-        fetchProfileData(); // Refresh profile data
+        resetPasswordForm();
       } else {
-        toast.error(result.error || "Failed to change password");
+        const errors = result.error;
+
+        // Converts object to readable string
+        const message = Object.values(errors).flat().join(" ");
+
+        toast.error(
+          message.charAt(0).toUpperCase() + message.slice(1) ||
+            "Failed to change password."
+        );
       }
     } catch (error) {
       toast.error("An error occurred while changing password");
     } finally {
-      setLoading(false);
+      setPasswordChanging(false);
     }
   };
 
@@ -107,6 +117,11 @@ const ProfilePage = () => {
     setIsEditing(false);
     reset(profileData); // Reset form to original values
   };
+
+  const hancleCancelChangePassword = () => {
+    resetPasswordForm();
+    setIsTyping(false);
+  }
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -154,7 +169,7 @@ const ProfilePage = () => {
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4 text-gray-200" />
                 <span className="text-md text-gray-400">
-                  {profileData?.phone_number}
+                  +977 {profileData?.phone_number}
                 </span>
               </div>
             </div>
@@ -165,16 +180,14 @@ const ProfilePage = () => {
       {/* Right Side Sections */}
       <div className="flex-1 flex flex-col gap-6">
         {/* Personal Info Section */}
-        <div className="bg-white rounded-lg p-6 text-md shadow-md font-[sans-serif]">
+        <div className="bg-white rounded-lg p-6 text-md shadow-md font-[sans-serif] border border-gray-200">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-2xl">Personal Information</h3>
+            <p className="font-semibold text-2xl">Personal Information</p>
 
             {!isEditing ? (
               <button
                 onClick={handleEdit}
-                className="text-md px-4 py-2 rounded-lg flex items-center space-x-2
-                    transition-colors duration-300 ease-in-out cursor-pointer 
-                    bg-gray-100 text-gray-600 hover:text-white hover:bg-[#C6735C] shadow-sm"
+                className="btn-secondary flex items-center space-x-2"
               >
                 <Edit3 className="w-4 h-4" />
                 <span>Edit</span>
@@ -183,14 +196,14 @@ const ProfilePage = () => {
               <div className="flex space-x-2">
                 <button
                   onClick={handleCancel}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+                  className="btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmitProfile(onSubmit)}
                   disabled={loading}
-                  className="bg-green-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
                 >
                   {loading ? (
                     <div className="loading-spinner w-4 h-4"></div>
@@ -205,7 +218,7 @@ const ProfilePage = () => {
           <hr className="mb-4 border-gray-200" />
 
           <form onSubmit={handleSubmitProfile(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 ">
               <div>
                 <label className="block mb-2 font-md">First Name</label>
                 <input
@@ -261,7 +274,9 @@ const ProfilePage = () => {
             <div className="mb-4">
               <label className="block mb-2 font-md">Email</label>
               <div className="relative">
+                {/* <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" /> */}
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                {/* <Lock className="text-gray-400" /> */}
                 <input
                   type="email"
                   id="email"
@@ -279,8 +294,10 @@ const ProfilePage = () => {
             {/* Phone Number */}
             <div className="mb-4">
               <label className="block mb-2 font-md">Phone Number</label>
+              {/* <div className="flex items-center border border-gray-300 rounded-lg pl-3 pr-4 py-2"> */}
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                {/* <Phone className="text-gray-400 mr-2" /> */}
                 <input
                   type="tel"
                   id="phone_number"
@@ -314,20 +331,24 @@ const ProfilePage = () => {
           onSubmit={handleSubmitPassword(handleChangePassword)}
           className="space-y-6"
         >
-          <div className="bg-white rounded-lg p-6 shadow-md font-[sans-serif]">
+          <div className="bg-white rounded-lg p-6 shadow-md font-[sans-serif] border border-gray-200">
             <h3 className="font-semibold mb-5 text-2xl">Change Password</h3>
             <hr className="mb-4 border-gray-200" />
 
             {/* Old Password */}
             <div className="mb-4">
               <label className="block mb-2 font-md">Old Password</label>
-              <div className="flex items-center border border-gray-300 rounded pl-3 pr-4 py-2">
+              <div className="flex items-center border border-gray-300 rounded-lg pl-3 pr-4 py-2">
                 <Lock className="text-gray-400 mr-2" />
                 <input
                   type={showCurrentPassword ? "text" : "password"}
+
                   id="current_password"
                   {...registerPassword("current_password", {
                     required: "Current password is required",
+                    onChange: (e) => {
+                      setIsTyping(e.target.value.length > 0);
+                    },
                   })}
                   className="w-full outline-none text-sm"
                 />
@@ -363,6 +384,11 @@ const ProfilePage = () => {
                     minLength: {
                       value: 6,
                       message: "New password must be at least 6 characters",
+                    },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                      message:
+                        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
                     },
                   })}
                   className="w-full outline-none text-md"
@@ -422,15 +448,18 @@ const ProfilePage = () => {
             </div>
 
             {/* Submit button */}
-            <div className="flex">
+            <div className="flex gap-2">
+              {isTyping ? (
+                <button className="btn-secondary" onClick={hancleCancelChangePassword}>Cancel</button>
+              ) : null}
+
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary px-8 py-3 text-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                {loading ? (
+                {changing ? (
                   <>
-                    <Edit3 className="w-5 h-5" />
                     <div className="loading-spinner w-5 h-5 mr-3"></div>
                     <span>Changing...</span>
                   </>

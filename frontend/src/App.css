@@ -19,11 +19,11 @@
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-.prediction-form {
+/* .prediction-form {
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
-}
+} */
 
 /* Responsive design */
 @media (max-width: 768px) {

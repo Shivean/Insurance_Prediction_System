@@ -15,6 +15,7 @@ import logo from "./insure-predict-cropped.png";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "react-hot-toast";
+import ThemeToggle from "../components/ThemeToggle";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -49,6 +50,7 @@ const MainLayout = () => {
       await logout();
       localStorage.removeItem("token"); // Clear the token from local storage
       navigate("/"); // Redirect to the LandingPage route after logout
+      window.location.reload();
     } catch (error) {
       console.error("Logout failed:", error);
       toast.error("Logout failed. Please try again.");
@@ -65,8 +67,9 @@ const MainLayout = () => {
   return (
     <div className="h-screen flex flex-col ">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#37474F] to-[#263238] text-white flex items-center gap-12 px-6 py-4 shadow">
-        <img
+      <header className="bg-gradient-to-r from-[#37474F] to-[#263238] text-white flex items-center gap-12 px-6 py-4 shadow justify-between">
+        <div className="flex items-center gap-12 ">
+          <img
           src={logo}
           alt="Logo"
           onClick={handleLogoClick}
@@ -75,19 +78,22 @@ const MainLayout = () => {
         <h1 className="text-xl font-[BIZ_UDPMincho]">
           Insurance Prediction System Services
         </h1>
+        </div>
+        
+        <ThemeToggle />
       </header>
 
       {/* Body */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside
-          className={`relative bg-[#E5F5F8] p-4 flex flex-col justify-between transition-all duration-300 ${
+          className={`relative layout-sidebar p-4 flex flex-col justify-between transition-all duration-300 ${
             sidebarVisible ? "w-72" : "w-20 items-center"
           }`}
         >
           <nav className="flex flex-col gap-4">
-            <NavItem 
-              icon={<FaHome/>}
+            <NavItem
+              icon={<FaHome size={25} />}
               label="Home"
               to="/"
               visible={showNavLabels}
@@ -156,21 +162,21 @@ const MainLayout = () => {
           </div>
 
           {showModal && (
-            <div className="fixed inset-0 bg bg-opacity-20 flex justify-center items-center backdrop-blur-md">
-              <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                <h3 className="text-lg font-semibold mb-4">Are you sure?</h3>
+            <div className="fixed inset-0 flex justify-center items-center backdrop-blur-md">
+              <div className="modal-bg p-6 rounded-lg shadow-lg w-96 border border-gray-200">
+                <h3 className="text-lg text-gray-800 font-semibold mb-4">Are you sure?</h3>
                 <p className="text-gray-600 mb-4">
                   Do you really want to log out?
                 </p>
                 <div className="flex justify-end gap-4">
                   <button
-                    className="px-4 py-2 bg-gray-300 rounded text-gray-700 hover:bg-gray-400"
+                    className="btn-secondary"
                     onClick={() => setShowModal(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-rose-600"
+                    className="btn-danger"
                     onClick={confirmLogout}
                     disabled={loading}
                   >
@@ -183,7 +189,7 @@ const MainLayout = () => {
         </aside>
 
         {/* Main content (Always visible, adjusts width based on sidebar) */}
-        <main className="main-scroll flex-1 bg-[#CFE8ED] p-6  overflow-y-auto h-full">
+        <main className="main-scroll flex-1 layout-main p-6  overflow-y-auto h-full">
           <Outlet />
         </main>
       </div>

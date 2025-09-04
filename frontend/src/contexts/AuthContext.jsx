@@ -18,10 +18,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user is already logged in
-    // What if token not found in localstorage? --> 
-    // We will set loading to false and not update user state 
-     
-    // 
+    // What if token not found in localstorage? -->
+    // We will set loading to false and not update user state
+
+    //
     const token = localStorage.getItem("token");
     if (token) {
       api.defaults.headers.common["Authorization"] = `Token ${token}`;
@@ -57,12 +57,12 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       setIsAuthenticated(true);
 
-      return { success: true };
+      return { success: true, data: response.data };
     } catch (error) {
       console.error("Login failed:", error);
       return {
         success: false,
-        error: error.response?.data?.message || "Login failed",
+        error: error.response.data || "Login failed",
       };
     }
   };
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Registration failed:", error);
       return {
         success: false,
-        error: error.response?.data?.message || "Registration failed",
+        error: error.response.data,
       };
     }
   };
@@ -125,12 +125,28 @@ export const AuthProvider = ({ children }) => {
         "/api/users/profile/change_password/",
         passwordData
       );
-      return { success: true, message: response.data.message };
+      return { success: true, message: response.data };
     } catch (error) {
       console.error("Change password failed:", error);
       return {
         success: false,
-        error: error.response?.data?.message || "Change password failed",
+        error: error.response.data || "Change password failed",
+      };
+    }
+  };
+
+  const carInsurancePredictionAPI = async (predictionData) => {
+    try {
+      const response = await api.post(
+        "/api/predictions/car_insurance/",
+        predictionData
+      );
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error("Prediction failed:", error);
+      return {
+        success: false,
+        error: error.response.data,
       };
     }
   };
@@ -144,6 +160,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     changePassword,
+    carInsurancePredictionAPI,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
