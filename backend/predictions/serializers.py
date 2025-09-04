@@ -3,8 +3,8 @@ from .models import PredictionHistory
 
 class CarInsuranceSerializer(serializers.Serializer): 
     driver_age = serializers.IntegerField()
-    driving_experience = serializers.IntegerField()
-    annual_mileage = serializers.IntegerField()
+    driving_experience = serializers.FloatField()
+    annual_mileage = serializers.FloatField()
     car_mfg_year = serializers.IntegerField()
     prv_accident = serializers.IntegerField()
 
